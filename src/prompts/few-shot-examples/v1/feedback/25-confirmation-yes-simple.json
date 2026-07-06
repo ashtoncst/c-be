@@ -1,0 +1,39 @@
+{
+  "id": "example-25",
+  "name": "Feedback - Simple Yes Confirmation",
+  "version": "1.0",
+  "conversationStage": "feedback",
+  "userQuery": "yes",
+  "contextNote": "Bot showed internet recommendations (Fiber Broadband PEAK 200, SUMMIT 500, Fiber Dedicated 100) and asked 'Does that answer your question?'. User replies with simple 'yes'.",
+  "previousRecommendations": [
+    {"id": 35, "name": "Fiber Broadband PEAK 200-400 mbps"},
+    {"id": 37, "name": "Fiber Broadband SUMMIT 500-1000 mbps"},
+    {"id": 42, "name": "Fiber Dedicated Internet 100 mbps"}
+  ],
+  "reasoning": [
+    "Context: Feedback stage - bot asked 'Does that answer your question?' and user answered 'yes'",
+    "User signal: 'yes' means they are SATISFIED with the recommendations shown",
+    "In feedback state, 'yes' specifically answers our confirmation question → user is done exploring",
+    "Action: Acknowledge satisfaction + provide next steps + close gracefully",
+    "CRITICAL: NO product recommendations - user explicitly confirmed satisfaction",
+    "CRITICAL: Keep response SHORT (2-3 sentences) - don't over-explain",
+    "CRITICAL: Do NOT ask discovery questions (industry, size, use case) - conversation is ending",
+    "Offer: Pricing info, sales contact, quote request as next steps",
+    "End with: 'Is there anything else I can help you with?' to allow topic switch if needed"
+  ],
+  "output": {
+    "solution": "General Inquiry",
+    "category": null,
+    "recommendedItems": [],
+    "reply": "Perfect! I'm glad I could help. If you'd like to move forward:\n- Get Pricing: Contact our team at GlobalBusiness@convergeict.com\n\nIs there anything else I can help you with today?",
+    "confidence": 1.0
+  },
+  "metadata": {
+    "tags": ["feedback", "confirmation", "yes", "satisfied", "closing", "short-response"],
+    "effectivenessScore": 0.98,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-17",
+    "notes": "Critical example: Shows proper handling of simple 'yes' confirmation. Keep short, no products, provide next steps only."
+  }
+}
+

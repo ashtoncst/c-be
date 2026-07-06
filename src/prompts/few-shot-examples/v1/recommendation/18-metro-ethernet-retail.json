@@ -1,0 +1,49 @@
+{
+  "id": "example-18",
+  "name": "Recommendation - Metro Ethernet for Retail Chain",
+  "version": "1.0",
+  "conversationStage": "recommendation",
+  "userQuery": "we have 8 retail stores in metro manila and need to connect them to our head office",
+  "contextNote": "User has provided: retail chain + 8 stores + metro area + head office connectivity. Clear WAN connectivity need.",
+  "reasoning": [
+    "Context: Recommendation stage - multi-site retail with head office connection",
+    "Key signals: '8 stores' + 'metro manila' + 'connect to head office' → Transport solution",
+    "Solution mapping: Transport → Metro Ethernet (best for metro area) or SD-WAN",
+    "Geographic scope: Metro Manila = Metro Ethernet is ideal (same metro area)",
+    "Use case: Retail = POS systems, inventory, centralized management",
+    "Scale: 8 sites = medium deployment",
+    "Alternative: SD-WAN if they need application optimization and flexible routing",
+    "Bundle: Fiber Broadband for each location as the local access"
+  ],
+  "output": {
+    "solution": "Transport",
+    "category": "Metro Ethernet",
+    "recommendedItems": [
+      {
+        "id": 12,
+        "name": "Metro Ethernet",
+        "reason": "Perfect for connecting your 8 retail stores across Metro Manila. Secure high-capacity WAN connectivity enables seamless collaboration between all stores and head office. Ideal for centralized POS systems, real-time inventory management, and unified communications. Pure fiber network ensures reliable connectivity for business-critical operations."
+      },
+      {
+        "id": 64,
+        "name": "SD-WAN Basic",
+        "reason": "Alternative solution that adds intelligent traffic routing between your stores. If you need application prioritization (POS over other traffic) or 4G/LTE backup for each location, SD-WAN provides that flexibility. Includes centralized network management for all 8 sites."
+      },
+      {
+        "id": 35,
+        "name": "Fiber Broadband PEAK 200-400 mbps",
+        "reason": "Local internet connectivity for each store. While Metro Ethernet connects stores together, Fiber Broadband provides internet access for each location (cloud apps, email, web). 200-400 Mbps handles multiple POS terminals and staff internet usage."
+      }
+    ],
+    "reply": "Perfect use case! For your 8 retail stores in Metro Manila connecting to head office, I recommend:\n\n**Metro Ethernet**: Best solution for metro-area store connectivity. Creates a secure, high-capacity network linking all stores and head office. Ideal for:\n- Centralized POS systems and payment processing\n- Real-time inventory synchronization\n- Unified communications (phone, video)\n- Centralized management and monitoring\n\n**SD-WAN Basic**: Alternative if you need intelligent traffic routing and 4G/LTE backup at each store. Prioritizes critical applications (POS) and includes centralized management.\n\n**Fiber Broadband PEAK 200-400 mbps**: Local internet for each store location. Handles cloud applications, staff internet, and customer Wi-Fi.\n\n**Recommendation**: Metro Ethernet for store-to-HQ connectivity + Fiber Broadband at each location for internet access. This gives you secure inter-store communication plus reliable internet.\n\n**Questions to finalize**:\n1. Do your stores need internet access (cloud apps) or just connection to head office?\n2. What applications are critical (POS, inventory, video surveillance)?\n\nDoes that answer your question?",
+    "confidence": 0.90
+  },
+  "metadata": {
+    "tags": ["metro-ethernet", "transport", "retail", "multi-site", "wan", "recommendation"],
+    "effectivenessScore": 0.91,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Demonstrates Transport category with Metro Ethernet vs SD-WAN differentiation. Shows retail-specific use cases. Intelligent bundling with Fiber Broadband."
+  }
+}
+

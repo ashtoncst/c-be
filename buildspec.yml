@@ -1,0 +1,42 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - echo Installing dependencies...
+      - npm ci
+  pre_build:
+    commands:
+      - echo Running linter and type checks...
+      - npm run prep
+      - echo Running tests...
+      - npm run test:unit -- --run
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - REPOSITORY_URI=${ECR_REPOSITORY_URL}
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Writing image definitions file...
+      - printf '[{"name":"app","imageUri":"%s"}]' $REPOSITORY_URI:latest > imagedefinitions.json
+      - echo Triggering ECS deployment...
+      - aws ecs update-service --cluster converge-backend-staging-cluster --service converge-backend-staging-service --force-new-deployment --region $AWS_DEFAULT_REGION
+      - echo Deployment triggered successfully
+
+artifacts:
+  files:
+    - imagedefinitions.json

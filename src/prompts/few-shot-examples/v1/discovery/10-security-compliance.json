@@ -1,0 +1,47 @@
+{
+  "id": "example-10",
+  "name": "Discovery - Security & Compliance Focus",
+  "version": "1.0",
+  "conversationStage": "discovery",
+  "userQuery": "we need security solutions for our financial services company",
+  "reasoning": [
+    "Context: Discovery stage - security-first query with industry context",
+    "Key signals: 'security solutions' + 'financial services' → high compliance requirements",
+    "Solution mapping: 'security' → Security Anti-DDoS as primary",
+    "Target audience: Banking & Financial Services → high-risk sector, needs premium security",
+    "Additional needs: Financial services also need secure connectivity + data protection",
+    "Recommendation strategy: Show multiple security tiers + mention connectivity options",
+    "Important: Financial services = high-value target → recommend Cloud or Hybrid defenses"
+  ],
+  "output": {
+    "solution": "Security Anti-DDos",
+    "category": null,
+    "recommendedItems": [
+      {
+        "id": 56,
+        "name": "Hybrid Defenses",
+        "reason": "Most comprehensive security for financial services. Combines on-premise and cloud protection for fastest mitigation against sophisticated attacks targeting the financial sector. Meets compliance requirements for banking institutions."
+      },
+      {
+        "id": 55,
+        "name": "Cloud Defenses",
+        "reason": "Advanced cloud-based protection ideal for financial services facing large-scale attacks. Global scrubbing centers provide enterprise-grade security for high-risk industries. Includes 24/7 monitoring and threat intelligence."
+      },
+      {
+        "id": 54,
+        "name": "On-Premise Defense",
+        "reason": "Entry-level DDoS protection with local scrubbing. Good starting point for smaller financial institutions. Fast mitigation within the Converge network with lower latency than cloud-only solutions."
+      }
+    ],
+    "reply": "For financial services, security is critical. I recommend our comprehensive DDoS protection options:\n\n**Hybrid Defenses**: Most comprehensive - combines on-premise and cloud protection for fastest mitigation. Ideal for banks and high-risk financial institutions.\n**Cloud Defenses**: Advanced protection via global scrubbing centers. Perfect for large-scale attacks targeting the financial sector.\n**On-Premise Defense**: Entry-level protection with fast local mitigation. Good starting point for smaller financial operations.\n\nGiven the sensitive nature of financial services, we can also discuss secure connectivity (fiber with built-in protection) and data center solutions. What's your company size and what specific security concerns do you have?",
+    "confidence": 0.90
+  },
+  "metadata": {
+    "tags": ["security", "compliance", "financial-services", "banking", "high-risk", "ddos", "discovery"],
+    "effectivenessScore": 0.93,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Demonstrates security-first discovery with industry context. Shows understanding of financial services compliance needs. Presents multi-tier options allowing customer choice. Mentions complementary solutions without overwhelming."
+  }
+}
+

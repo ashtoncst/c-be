@@ -1,0 +1,67 @@
+{
+  "id": "example-29",
+  "name": "Feedback - No (Missing Specific Requirements)",
+  "version": "1.0",
+  "conversationStage": "feedback",
+  "userQuery": "no",
+  "contextNote": "Bot showed basic transport recommendations (Metro Ethernet, IP VPN Basic) for a financial services company. User says 'no' - likely because recommendations don't address compliance/security requirements typical for financial sector.",
+  "previousRecommendations": [
+    {"id": 58, "name": "Metro Ethernet"},
+    {"id": 59, "name": "IP VPN Basic Package"},
+    {"id": 62, "name": "SD-WAN Basic Package"}
+  ],
+  "contextFromPreviousTurn": {
+    "userMentioned": "financial services company",
+    "previousSolution": "Transport",
+    "previousCategory": "Network Solutions"
+  },
+  "reasoning": [
+    "Context: User said 'no' to basic transport solutions for financial services",
+    "Likely issue: Financial sector requires high security, SLA guarantees, compliance features",
+    "User context: 'financial services' suggests need for dedicated circuits, encryption, redundancy",
+    "Solution: Show enterprise-grade transport + security bundle",
+    "Strategy: Recommend IP VPN Premium, SD-WAN Premium with security features, dedicated options",
+    "CRITICAL: Address compliance/security needs specific to financial sector",
+    "CRITICAL: Do NOT ask for industry - we already know it's financial services",
+    "CRITICAL: Show premium/enterprise alternatives with security emphasis",
+    "CRITICAL: Bundle with security solutions (DDoS protection, encryption)",
+    "Ask: Specific question about compliance requirements or redundancy needs",
+    "Acknowledge: Industry-specific requirements"
+  ],
+  "output": {
+    "solution": "Transport",
+    "category": "Enterprise Network Solutions",
+    "recommendedItems": [
+      {
+        "id": 60,
+        "name": "IP VPN Premium Package",
+        "reason": "Enterprise-grade VPN with guaranteed SLAs, encryption, and 24/7 monitoring. Meets compliance requirements for financial services (PCI DSS, SOX)."
+      },
+      {
+        "id": 63,
+        "name": "SD-WAN Premium Package",
+        "reason": "Advanced routing with built-in security (firewall, encryption, threat detection). Automatic failover ensures no transaction disruptions."
+      },
+      {
+        "id": 55,
+        "name": "Cloud Defenses (DDoS Protection)",
+        "reason": "Bundle with network transport for comprehensive security. Protects financial transactions and customer data from cyber threats."
+      },
+      {
+        "id": 43,
+        "name": "Fiber Dedicated Internet 200 mbps",
+        "reason": "Dedicated circuit with guaranteed bandwidth. No sharing = consistent performance for real-time financial transactions."
+      }
+    ],
+    "reply": "I understand - for financial services, you need solutions that meet strict compliance and security requirements. Here are enterprise-grade alternatives:\n\n**IP VPN Premium Package**: Guaranteed SLAs, encryption, and compliance-ready (PCI DSS, SOX) with 24/7 monitoring\n**SD-WAN Premium Package**: Advanced security features (firewall, threat detection) with automatic failover for zero downtime\n**Cloud Defenses (DDoS Protection)**: Bundle with your network for comprehensive protection of financial transactions\n**Fiber Dedicated Internet**: Dedicated circuit with guaranteed bandwidth - no sharing means consistent performance\n\nAre compliance certifications (PCI DSS, SOX) your primary concern, or are you focused on redundancy and uptime guarantees?",
+    "confidence": 0.87
+  },
+  "metadata": {
+    "tags": ["feedback", "no", "rejection", "missing-requirements", "financial-services", "compliance", "security", "enterprise", "alternatives"],
+    "effectivenessScore": 0.95,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-17",
+    "notes": "Critical example: Shows how to infer missing requirements from industry context (financial = compliance/security) and provide appropriate alternatives without asking what's wrong. Demonstrates industry-specific solution bundling."
+  }
+}
+

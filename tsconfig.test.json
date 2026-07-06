@@ -1,0 +1,13 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"types": ["vitest/globals", "node"], // ✅ Only include node types
+		"rootDir": ".",
+		"noEmit": true,
+		"skipLibCheck": true,
+		"moduleResolution": "bundler", // ✅ Add this for better module resolution
+		"allowImportingTsExtensions": true // ✅ Allow .ts imports
+	},
+	"include": ["test/**/*", "src/**/*"],
+	"exclude": ["node_modules", "dist"]
+}

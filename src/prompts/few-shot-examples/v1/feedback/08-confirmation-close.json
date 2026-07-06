@@ -1,0 +1,33 @@
+{
+  "id": "example-08",
+  "name": "Feedback - User Confirms Satisfaction",
+  "version": "1.0",
+  "conversationStage": "feedback",
+  "userQuery": "yes",
+  "contextNote": "Bot just showed security recommendations (IDs: 54, 55, 56) and asked 'Does that answer your question?'. User is now answering 'yes' to THAT SPECIFIC QUESTION, meaning they are satisfied and conversation should close.",
+  "reasoning": [
+    "Context: Feedback stage - bot asked 'Does that answer your question?' and user answered 'yes'",
+    "User signal: 'yes' is answering OUR SPECIFIC QUESTION = user is satisfied with recommendations shown",
+    "Important: This 'yes' is different from 'yes' to clarifying questions (like 'Is this for a hotel?')",
+    "In feedback state, 'yes' specifically means: 'Yes, those recommendations answer my question' → close conversation",
+    "Action: Acknowledge satisfaction + offer next steps (pricing, sales contact) + NO MORE PRODUCTS",
+    "CRITICAL: Do NOT show any product recommendations - user explicitly confirmed satisfaction",
+    "CRITICAL: Keep response SHORT - just acknowledgment + next steps",
+    "CRITICAL: This is the END of the product discussion, move to closing gracefully"
+  ],
+  "output": {
+    "solution": "Security Anti-DDos",
+    "category": null,
+    "recommendedItems": [],
+    "reply": "Perfect! I'm glad I could help. If you'd like to move forward, here are your next steps:\n\n- **Get Pricing**: Contact our sales team for detailed quotes\n- **Schedule a Demo**: See our security solutions in action\n- **Speak with an Expert**: Call us at 1-800-CONVERGE\n\nIs there anything else I can help you with today?",
+    "confidence": 1.0
+  },
+  "metadata": {
+    "tags": ["feedback", "confirmation", "satisfied", "closing", "next-steps"],
+    "effectivenessScore": 0.98,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Critical example: Teaches AI to STOP recommending products when user confirms satisfaction. Keep short and offer next steps only."
+  }
+}
+

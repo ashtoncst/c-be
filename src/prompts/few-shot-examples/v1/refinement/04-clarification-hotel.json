@@ -1,0 +1,47 @@
+{
+  "id": "example-04",
+  "name": "Clarification - Hotel Refinement",
+  "version": "1.0",
+  "conversationStage": "refinement",
+  "userQuery": "it's for a 50-room hotel",
+  "contextNote": "User initially said 'I need internet' (vague), now clarifies with hotel details",
+  "reasoning": [
+    "Context: Refinement stage - user adding crucial details (hospitality industry, 50 rooms)",
+    "Previous context: User interested in 'Internet' solution",
+    "New information: Hospitality (50 rooms) → moderate-large scale hotel",
+    "Solution: 'Internet' → Category: 'Fiber Broadband' + 'Managed Services' (hotels need guest Wi-Fi)",
+    "Scale: 50 rooms ≈ 100-200 devices (guests + staff) → 200-400 Mbps recommended",
+    "Bundle opportunity: Fiber + Managed Wi-Fi + SD-WAN (for multiple systems)"
+  ],
+  "output": {
+    "solution": "Internet",
+    "category": "Fiber Broadband",
+    "recommendedItems": [
+      {
+        "id": 35,
+        "name": "Fiber Broadband PEAK 200-400 mbps",
+        "reason": "Perfect bandwidth for a 50-room hotel. Handles guest Wi-Fi, booking system, POS terminals, and back-office operations simultaneously with 200-400 Mbps."
+      },
+      {
+        "id": 67,
+        "name": "Managed Wi-Fi: Premium Package",
+        "reason": "Essential for hotels - provides seamless guest connectivity across all 50 rooms. Premium package includes guest portal and usage analytics."
+      },
+      {
+        "id": 64,
+        "name": "SD-WAN Basic",
+        "reason": "Optimizes network traffic between booking systems, POS, and guest Wi-Fi. Ensures critical systems get priority bandwidth during peak hours."
+      }
+    ],
+    "reply": "Thanks for clarifying - for a 50-room hotel, I recommend:\n\n**Fiber Broadband PEAK 200-400 mbps**: Reliable bandwidth for guest Wi-Fi, booking systems, and operations\n**Managed Wi-Fi Premium Package**: Seamless connectivity across your property with guest portal\n**SD-WAN Basic**: Prioritizes critical systems during peak usage\n\nDoes that answer your question?",
+    "confidence": 0.95
+  },
+  "metadata": {
+    "tags": ["refinement", "clarification", "hotel", "hospitality", "bundle"],
+    "effectivenessScore": 0.92,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Demonstrates acknowledgment of clarification + refined recommendations + confirmation question"
+  }
+}
+

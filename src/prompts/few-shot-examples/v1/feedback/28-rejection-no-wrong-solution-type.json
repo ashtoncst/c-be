@@ -1,0 +1,61 @@
+{
+  "id": "example-28",
+  "name": "Feedback - No (Wrong Solution Type/Technology)",
+  "version": "1.0",
+  "conversationStage": "feedback",
+  "userQuery": "not really",
+  "contextNote": "Bot showed fiber-based internet recommendations (Fiber Broadband PEAK 200, SUMMIT 500, IX Express) for a user in a remote area. User says 'not really' - likely because fiber isn't available in their location.",
+  "previousRecommendations": [
+    {"id": 35, "name": "Fiber Broadband PEAK 200-400 mbps"},
+    {"id": 37, "name": "Fiber Broadband SUMMIT 500-1000 mbps"},
+    {"id": 41, "name": "IX Express (Internet Exchange)"}
+  ],
+  "contextFromPreviousTurn": {
+    "userMentioned": "remote area",
+    "previousSolution": "Internet",
+    "previousCategory": "Fiber Broadband"
+  },
+  "reasoning": [
+    "Context: User said 'not really' to fiber recommendations for remote area",
+    "Likely issue: Fiber infrastructure not available in remote location",
+    "User context: 'remote area' strongly suggests need for satellite/wireless solutions",
+    "Solution: Switch from fiber to satellite while staying in Internet solution category",
+    "Strategy: Recommend Starlink + wireless backup options",
+    "CRITICAL: Do NOT ask for industry/size/use case - already have context",
+    "CRITICAL: Acknowledge likely infrastructure challenge (fiber availability)",
+    "CRITICAL: Show DIFFERENT technology (satellite) not just different fiber tiers",
+    "Ask: ONE question about location specifics or backup connectivity needs",
+    "Show empathy: Recognize remote area connectivity challenges"
+  ],
+  "output": {
+    "solution": "Satellite",
+    "category": "Starlink",
+    "recommendedItems": [
+      {
+        "id": 52,
+        "name": "Satellite Internet (Starlink)",
+        "reason": "Perfect for remote areas without fiber infrastructure. High-speed connectivity (50-200 mbps) via satellite. Quick deployment, no ground infrastructure needed."
+      },
+      {
+        "id": 35,
+        "name": "Fiber Broadband PEAK 200-400 mbps",
+        "reason": "Consider as backup option if fiber becomes available in your area. Some remote areas have expanding fiber coverage."
+      },
+      {
+        "id": 53,
+        "name": "4G/5G Wireless Backup",
+        "reason": "Redundancy option to pair with Starlink. Ensures connectivity even if satellite connection is affected by weather."
+      }
+    ],
+    "reply": "I understand - fiber infrastructure might not be available in your remote area. Here are better alternatives:\n\n**Satellite Internet (Starlink)**: Perfect solution for remote locations. High-speed connectivity (50-200 mbps) with no ground infrastructure needed. Quick deployment.\n**4G/5G Wireless Backup**: Consider this as redundancy paired with Starlink for weather-related outages.\n\nIs fiber infrastructure unavailable in your area, or are you looking for a faster deployment option?",
+    "confidence": 0.85
+  },
+  "metadata": {
+    "tags": ["feedback", "no", "rejection", "wrong-technology", "remote-area", "satellite", "infrastructure", "alternatives"],
+    "effectivenessScore": 0.94,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-17",
+    "notes": "Critical example: Shows how to pivot from wrong technology (fiber) to appropriate solution (satellite) based on user context (remote area) without restarting discovery. Demonstrates contextual inference."
+  }
+}
+

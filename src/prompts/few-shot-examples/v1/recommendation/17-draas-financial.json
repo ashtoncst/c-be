@@ -1,0 +1,48 @@
+{
+  "id": "example-17",
+  "name": "Recommendation - DraaS for Financial Services",
+  "version": "1.0",
+  "conversationStage": "recommendation",
+  "userQuery": "we need disaster recovery solution for our banking operations",
+  "contextNote": "User has provided: financial services + disaster recovery needs. Critical compliance and uptime requirements.",
+  "reasoning": [
+    "Context: Recommendation stage - financial services with DR requirements",
+    "Key signals: 'banking' + 'disaster recovery' → DraaS (Disaster Recovery as a Service)",
+    "Solution mapping: Managed Services → DraaS",
+    "Industry: Banking/Financial → high compliance, zero downtime tolerance, regulatory requirements",
+    "Critical factors: Business continuity, data protection, cyber attack resilience",
+    "OPEX model: Financial services prefer operational expenditure vs large CAPEX",
+    "Bundle opportunity: Pair with Security Anti-DDoS and secure connectivity"
+  ],
+  "output": {
+    "solution": "Managed Services",
+    "category": "DraaS",
+    "recommendedItems": [
+      {
+        "id": 29,
+        "name": "DraaS",
+        "reason": "Essential for banking operations. Disaster Recovery as a Service provides in-country cloud backup with continuous data protection. Ensures business continuity during disasters, outages, or cyber attacks. OPEX model avoids large upfront investments. Meets regulatory compliance requirements for financial institutions."
+      },
+      {
+        "id": 56,
+        "name": "Hybrid Defenses",
+        "reason": "Critical security layer for banking. Combines on-premise and cloud DDoS protection with fastest mitigation times. Protects your infrastructure from sophisticated attacks while DraaS protects your data. Essential for financial services facing high-risk cyber threats."
+      },
+      {
+        "id": 36,
+        "name": "Fiber Broadband PEAK 300-600 mbps",
+        "reason": "Reliable connectivity foundation for DraaS and daily operations. 300-600 Mbps handles continuous data replication, remote access, and banking transactions. Dedicated support ensures uptime for critical financial services."
+      }
+    ],
+    "reply": "Excellent focus on business continuity! For banking operations, I recommend a comprehensive disaster recovery and security solution:\n\n**DraaS (Disaster Recovery as a Service)**: Core solution for your banking operations. Provides:\n- In-country cloud backup with continuous data protection\n- Business continuity during disasters, outages, or cyber attacks  \n- OPEX model (no large upfront investment)\n- Meets BSP/regulatory compliance requirements\n- Rapid recovery time objectives (RTO) for critical systems\n\n**Hybrid Defenses**: Essential security layer protecting against DDoS attacks and cyber threats targeting financial institutions. Fastest mitigation times combining on-premise + cloud protection.\n\n**Fiber Broadband PEAK 300-600 mbps**: Reliable connectivity for continuous data replication and daily operations with dedicated priority support.\n\n**Together**: These create a resilient infrastructure where your data is protected (DraaS), your network is secured (Hybrid Defenses), and your connectivity is reliable (Fiber Broadband).\n\n**Key questions**: \n1. What's your current data volume and critical systems that need protection?\n2. What RTO/RPO targets does your compliance require?\n\nDoes that answer your question?",
+    "confidence": 0.93
+  },
+  "metadata": {
+    "tags": ["draas", "disaster-recovery", "banking", "financial-services", "compliance", "business-continuity", "recommendation"],
+    "effectivenessScore": 0.94,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Demonstrates DraaS positioning for high-compliance industry. Shows intelligent bundling with security and connectivity. Addresses regulatory concerns."
+  }
+}
+

@@ -1,0 +1,43 @@
+{
+  "id": "example-15",
+  "name": "Recommendation - Managed Wi-Fi for Hotel",
+  "version": "1.0",
+  "conversationStage": "recommendation",
+  "userQuery": "we're opening a 150-room boutique hotel and need wifi for guests",
+  "contextNote": "User has provided: hotel (150 rooms) + boutique (mid-tier) + guest wifi needs. Clear managed service requirement.",
+  "reasoning": [
+    "Context: Recommendation stage - hotel industry with specific room count",
+    "Key signals: '150-room hotel' + 'boutique' + 'guest wifi' → Managed Wi-Fi solution",
+    "Solution mapping: Managed Services → Managed Wi-Fi category",
+    "Scale analysis: 150 rooms = mid-sized hotel → either tier could work",
+    "Brand positioning: 'Boutique' suggests quality focus → could justify Premium",
+    "Budget consideration: Boutique also means cost-conscious → offer both tiers",
+    "Bundle opportunity: Mention Content/IPTV as complementary service"
+  ],
+  "output": {
+    "solution": "Managed Services",
+    "category": "Managed Wi-Fi",
+    "recommendedItems": [
+      {
+        "id": 67,
+        "name": "Managed Wi-Fi: Premium Package",
+        "reason": "Top-tier solution for boutique hotels focused on guest experience. Features leading enterprise brands (Huawei, Cisco) with seamless coverage across all 150 rooms. Includes expert management, monitoring, and quick troubleshooting to ensure guests never complain about connectivity."
+      },
+      {
+        "id": 66,
+        "name": "Managed Wi-Fi: Basic Package",
+        "reason": "Cost-effective solution that still delivers reliable guest Wi-Fi. Uses quality brands (Reyee, Ruijie, Zyxel) with simple deployment. Perfect if you want to balance budget with functionality. Fully managed so you don't need IT staff."
+      }
+    ],
+    "reply": "Perfect! For your 150-room boutique hotel, I recommend our **Managed Wi-Fi solutions**:\n\n**Premium Package**: Ideal for boutique hotels focused on exceptional guest experience. Uses top enterprise brands (Huawei, Cisco) with seamless coverage across all rooms. Fully managed by our experts including 24/7 monitoring and rapid support.\n\n**Basic Package**: More budget-friendly while still delivering reliable guest connectivity. Quality brands (Reyee, Ruijie, Zyxel) with simple deployment. Great for cost-conscious properties without sacrificing guest satisfaction.\n\nBoth options are **fully managed** - we handle installation, monitoring, and maintenance so you can focus on your guests.\n\n**Bonus**: We can also bundle this with **IPTV/Content solutions** to provide in-room entertainment (smart TV apps, live TV, hotel information). Interested in a complete connectivity + entertainment package?\n\nDoes that answer your question?",
+    "confidence": 0.92
+  },
+  "metadata": {
+    "tags": ["managed-wifi", "hotel", "hospitality", "guest-experience", "recommendation"],
+    "effectivenessScore": 0.93,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Shows managed Wi-Fi tier differentiation. Demonstrates bundle opportunity with Content. Addresses hospitality industry needs specifically."
+  }
+}
+

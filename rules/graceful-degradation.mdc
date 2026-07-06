@@ -1,0 +1,246 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: Enforces graceful degradation, timeouts, and retries in services and repositories.
+globs: src/services/**/*.ts, src/repositories/**/*.ts
+alwaysApply: false
+---
+
+# Graceful Degradation, Timeouts, and Retries
+
+To build a resilient and reliable system, all services and repository methods must implement mechanisms for graceful degradation, appropriate timeouts for external calls and long-running operations, and intelligent retries for transient failures.
+
+## I. Core Principles
+
+1.  **No Single Point of Failure**: Services should be designed to handle failures in their dependencies (other services, databases, external APIs) without catastrophically failing themselves.
+2.  **User Experience**: Failures should be handled in a way that minimizes negative impact on the user. This might mean returning partial data, cached data, a fallback response, or a clear error message.
+3.  **Resource Protection**: Prevent cascading failures by ensuring that a slow or failing dependency doesn't exhaust resources (e.g., connection pools, memory, CPU) in the calling service.
+4.  **Idempotency**: Retryable operations should ideally be idempotent to prevent unintended side effects from multiple executions.
+
+## II. Implementation Guidelines
+
+### 1. Timeouts
+
+-   **Identify External Calls**: Any network request to an external service, database query, or potentially long-running internal computation should have a timeout.
+-   **Use `withTimeout` Utility**: Leverage the `src/utils/async.ts#withTimeout` utility for wrapping promises with a timeout.
+-   **Contextual Timeouts**: Choose timeout values appropriate for the operation. User-facing operations should have shorter timeouts than background tasks.
+    -   Database queries: 5-15 seconds (can vary based on complexity).
+    -   External API calls (critical): 5-10 seconds.
+    -   External API calls (non-critical): 15-30 seconds.
+    -   Internal long-running tasks (e.g., `GeminiService.extractTextFromPdf` streaming): 5-15 minutes, with internal stall detection if possible.
+-   **Specific Timeout Errors**: Catch timeout errors specifically and handle them, potentially by retrying or returning a specific `AppError` (e.g., status code 504 Gateway Timeout or 408 Request Timeout).
+
+**Example (`withTimeout`):**
+
+```typescript
+// src/utils/async.ts
+export function withTimeout<T>(
+	promise: Promise<T>,
+	ms: number,
+	errorMessage = "Operation timed out"
+): Promise<T> {
+	return new Promise<T>((resolve, reject) => {
+		const timeoutId = setTimeout(() => {
+			reject(new Error(errorMessage)); // Consider AppError here
+		}, ms);
+
+		promise
+			.then((result) => {
+				clearTimeout(timeoutId);
+				resolve(result);
+			})
+			.catch((error) => {
+				clearTimeout(timeoutId);
+				reject(error);
+			});
+	});
+}
+
+// Usage in a service:
+import { withTimeout } from "../utils/async.js";
+import { AppError } from "../middleware/errorHandler.js";
+
+async someExternalCall(params: unknown): Promise<ExternalResponse> {
+    const apiPromise = this.externalApiClient.makeRequest(params);
+    try {
+        return await withTimeout(
+            apiPromise,
+            10000, // 10-second timeout
+            "External API call timed out"
+        );
+    } catch (error) {
+        if (error instanceof Error && error.message.includes("timed out")) {
+            throw new AppError(error.message, 504); // Gateway Timeout
+        }
+        throw error; // Re-throw other errors
+    }
+}
+```
+
+### 2. Retries
+
+-   **Identify Transient Failures**: Operations that can fail due to temporary issues (network glitches, rate limits, deadlocks, temporary unavailability) should be retried.
+-   **Use `withRetry` Utility**: Employ `src/utils/async.ts#withRetry` for implementing retry logic with exponential backoff.
+-   **Configuration**:
+    -   `maxRetries`: Typically 3-5 attempts.
+    -   `initialDelay`: Start with a small delay (e.g., 100ms - 1s).
+    -   `maxDelay`: Cap the delay to avoid excessively long waits (e.g., 15s - 60s).
+    -   `operationName`: Provide a descriptive name for logging.
+-   **Idempotency**: Ensure that retrying an operation multiple times will not lead to incorrect data or duplicated actions if the operation is not inherently idempotent. If not idempotent, consider alternative strategies or accept the risk with careful logging.
+-   **Error Logging**: `withRetry` logs warnings on failed attempts. Ensure critical failures after all retries are properly logged as errors.
+
+**Example (`withRetry`):**
+
+```typescript
+// src/utils/async.ts
+export interface RetryConfig {
+	maxRetries: number;
+	initialDelay: number; // ms
+	maxDelay: number; // ms
+	factor?: number; // Optional: Multiplier for the delay
+}
+
+export async function withRetry<T>(
+	fn: () => Promise<T>,
+	maxRetries: number,
+	initialDelay: number,
+	maxDelay: number,
+	operationName = "withRetry"
+): Promise<T> {
+    // ... implementation from async.ts ...
+}
+
+// Usage in a service:
+// this.retryConfig = { maxRetries: 3, initialDelay: 1000, maxDelay: 10000 };
+// ...
+try {
+    const result = await withRetry(
+        () => this.dependency.flakyOperation(args),
+        this.retryConfig.maxRetries,
+        this.retryConfig.initialDelay,
+        this.retryConfig.maxDelay,
+        `FlakyOperation-${documentId}`
+    );
+    return result;
+} catch (error) {
+    this.logger.error(`[${operationId}] FlakyOperation ultimately failed after all retries for ${documentId}`, error as Error, { documentId });
+    throw new AppError("Failed to complete operation despite retries", 500);
+}
+```
+
+### 3. Graceful Degradation & Fallbacks
+
+-   **Identify Critical vs. Non-Critical Operations**: Determine which parts of a feature are essential and which can be gracefully omitted or replaced if a dependency fails.
+-   **Fallbacks**:
+    -   **Default Values/Empty States**: If a piece of data cannot be fetched, return a sensible default (e.g., empty array, null, predefined placeholder).
+    -   **Cached Data**: If available and appropriate, serve stale data from a cache if the live source is unavailable. Indicate that the data is stale if possible.
+    -   **Alternative Logic Paths**: If a primary method (e.g., complex streaming) fails, attempt a simpler, more robust fallback (e.g., direct download for smaller files, as seen in `OcrService.processShardWithFallback`).
+-   **Circuit Breaker Pattern (Advanced)**: For frequently failing dependencies, consider implementing a circuit breaker to prevent repeated calls, allowing the dependency time to recover. This is not explicitly in `async.ts` but is a good pattern to be aware of.
+-   **Error Propagation**:
+    -   Use custom `AppError` types (from `src/middleware/errorHandler.ts`) to signal specific failure conditions to upstream services or the global error handler.
+    -   Avoid catching all errors and swallowing them without proper logging or re-throwing a more specific error.
+-   **Logging**: Log when degradation occurs, which fallback was used, and the original error.
+
+**Example (Fallback Logic - conceptual from `OcrService`):**
+
+```typescript
+// In OcrService.processShardWithFallback
+try {
+    // Attempt primary method (e.g., streaming)
+    return await this.executeMonitoredStreamingPipeline(...);
+} catch (streamingError) {
+    this.logger.warn(`Streaming failed, attempting fallback...`, streamingError);
+    // Check if fallback is appropriate (e.g., error type, file size)
+    if (this.canAttemptFallback(streamingError, fileSize)) {
+        try {
+            // Attempt secondary, more robust method (e.g., direct download)
+            return await this.processShardWithDirectDownload(...);
+        } catch (fallbackError) {
+            this.logger.error(`Both streaming and fallback failed.`, fallbackError);
+            throw fallbackError; // Or a new AppError summarizing the situation
+        }
+    }
+    throw streamingError; // Fallback not applicable or also failed
+}
+```
+
+**Example (Graceful Error Handling in Repositories):**
+
+```typescript
+// src/repositories/some.repository.ts
+import { AppError, NotFoundError } from "../middleware/errorHandler.js";
+// ...
+
+async findById(id: string): Promise<SomeModel | null> {
+    try {
+        const result = await this.pool.query("SELECT * FROM items WHERE id = $1", [id]);
+        if (result.rows.length === 0) {
+            return null; // Gracefully return null if not found
+        }
+        return result.rows[0] as SomeModel;
+    } catch (error) {
+        this.logger.error(`Database error in findById for id ${id}`, error as Error);
+        // Do not throw NotFoundError here; let service decide if null is an error.
+        // Throw a more generic AppError for actual DB connection issues etc.
+        throw new AppError("Database query failed", 500, { cause: error });
+    }
+}
+
+async criticalUpdate(id: string, data: UpdateDto): Promise<void> {
+    // Use withRetry for the DB operation
+    await withRetry(
+        async () => {
+            const client = await this.pool.connect();
+            try {
+                await client.query("BEGIN");
+                // ... perform update operations ...
+                // Check affected rows
+                // await client.query(...);
+                await client.query("COMMIT");
+            } catch (err) {
+                await client.query("ROLLBACK");
+                throw err; // Propagate to be caught by withRetry
+            } finally {
+                client.release();
+            }
+        },
+        3, 500, 5000, `CriticalUpdate-${id}`
+    );
+}
+```
+
+### 4. Monitoring and Logging
+
+-   **Structured Logging**: Use the `Logger` utility for consistent, structured logs.
+-   **Log Key Events**: Log the start and end of significant operations, retries, fallback executions, and errors.
+-   **Contextual Information**: Include relevant IDs (documentId, userId, operationId) in logs.
+-   **Metrics**: If possible, emit metrics for retry counts, timeout occurrences, and fallback usage.
+
+## III. Service-Specific Considerations
+
+-   **`OcrService`**:
+    -   Manages Document AI LROs: Uses polling (`pollOperationStatus`) and GCS event handling (`handleGcsOcrOutputEvent`) as fallback/primary mechanisms.
+    -   Shard processing (`processShardWithFallback`): Implements a fallback from streaming to direct download for OCR output JSONs.
+    -   Uses `withRetry` for GCS operations, database updates, and Pub/Sub publishing.
+-   **`EmbeddingLangChainService`**:
+    -   Batch processing of chunks with error handling per batch.
+    -   `initializeIncrementalProcessing`, `processTextShard`, `finalizeIncrementalProcessing`: Support breaking down large embedding tasks.
+    -   `handleProcessingFailure`: Allows upstream services to notify it of failures.
+-   **Repositories**:
+    -   Database queries should be wrapped with `withRetry` if they are part of an operation that can be retried (e.g., optimistic locking scenarios, or transient connection issues if not handled by the pool's own retry).
+    -   Explicit transaction management (`BEGIN`, `COMMIT`, `ROLLBACK`) is crucial for complex writes. Ensure client release.
+    -   Return `null` or throw `NotFoundError` appropriately from find methods.
+
+## IV. Anti-Patterns
+
+-   **Swallowing Errors**: Catching errors and not logging them or re-throwing an appropriate `AppError`.
+-   **Infinite Retries / No Backoff**: Retrying indefinitely or without increasing delays can overwhelm dependencies.
+-   **No Timeouts for External Calls**: Can lead to stuck requests and resource exhaustion.
+-   **Overly Aggressive Timeouts**: Can cause operations to fail unnecessarily for slow but eventually successful operations.
+-   **Failing Silently**: Not informing the user or calling system that an operation partially or fully failed.
+-   **Not Releasing Database Clients**: In repositories, failing to release a `PoolClient` after an operation (especially on error paths) can lead to pool exhaustion.
+
+By adhering to these guidelines, we can build more robust and user-friendly services.

@@ -1,0 +1,694 @@
+{
+  "info": {
+    "_postman_id": "cart-api-collection",
+    "name": "Converge Cart API",
+    "description": "Complete API tests for the Cart service including session management, cart operations, and sales lead conversion",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Session Management",
+      "item": [
+        {
+          "name": "Generate New Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{base_url}}/cart/session",
+              "host": ["{{base_url}}"],
+              "path": ["cart", "session"]
+            },
+            "description": "Create a new session ID for ephemeral users to start shopping"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has success property\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('success');",
+                  "    pm.expect(responseJson.success).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"Response has session data\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('data');",
+                  "    pm.expect(responseJson.data).to.have.property('sessionId');",
+                  "    pm.expect(responseJson.data).to.have.property('createdAt');",
+                  "});",
+                  "",
+                  "// Store session ID for subsequent tests",
+                  "if (pm.response.code === 201) {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.environment.set('session_id', responseJson.data.sessionId);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Session Information",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/cart/session/{{session_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["cart", "session", "{{session_id}}"]
+            },
+            "description": "Retrieve information about a specific session"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has session information\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('success');",
+                  "    pm.expect(responseJson).to.have.property('data');",
+                  "    pm.expect(responseJson.data).to.have.property('sessionId');",
+                  "    pm.expect(responseJson.data.sessionId).to.eql(pm.environment.get('session_id'));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Session Information - Invalid Session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/cart/session/invalid-session-id",
+              "host": ["{{base_url}}"],
+              "path": ["cart", "session", "invalid-session-id"]
+            },
+            "description": "Test error handling for invalid session ID"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404 or 400\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 404]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cart Operations",
+      "item": [
+        {
+          "name": "Add Item to Cart (NEW - itemId)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"{{session_id}}\",\n  \"itemId\": 33\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/cart/add",
+              "host": ["{{base_url}}"],
+              "path": ["cart", "add"]
+            },
+            "description": "Add an item to cart using NEW unified item model. Example: itemId 33 = 'Fiber Broadband PEAK 50-100 mbps' (SME product). You can use any item ID from 1-67."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates success\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('success');",
+                  "    pm.expect(responseJson.success).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains itemId\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.data).to.have.property('itemId');",
+                  "    pm.expect(responseJson.data.itemId).to.eql(33);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains item details\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.data).to.have.property('itemName');",
+                  "    pm.expect(responseJson.data).to.have.property('itemType');",
+                  "});",
+                  "",
+                  "// Store item ID for removal test",
+                  "if (pm.response.code === 201) {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.environment.set('added_item_id', responseJson.data.itemId);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Add Product to Cart (LEGACY - productId)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"{{session_id}}\",\n  \"productId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/cart/add",
+              "host": ["{{base_url}}"],
+              "path": ["cart", "add"]
+            },
+            "description": "Add a product to cart using LEGACY productId (backward compatibility). Example uses productId 1. Note: In the new model, use itemId instead for better support."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates success\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('success');",
+                  "    pm.expect(responseJson.success).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains cart item data\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('data');",
+                  "    pm.expect(responseJson.data).to.have.property('productId');",
+                  "    pm.expect(responseJson.data).to.have.property('quantity');",
+                  "});",
+                  "",
+                  "// Store product ID for removal test",
+                  "if (pm.response.code === 201) {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.environment.set('added_product_id', responseJson.data.productId);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Add Product to Cart - Invalid Data",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"{{session_id}}\",\n  \"productId\": 999,\n  \"quantity\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/cart/add",
+              "host": ["{{base_url}}"],
+              "path": ["cart", "add"]
+            },
+            "description": "Test error handling for invalid product ID"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Cart Contents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/cart/{{session_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["cart", "{{session_id}}"]
+            },
+            "description": "Retrieve all items in the cart for a specific session. This should show both items added with itemId and products added with productId."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has cart data\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('success');",
+                  "    pm.expect(responseJson).to.have.property('data');",
+                  "    pm.expect(responseJson.data).to.have.property('sessionId');",
+                  "    pm.expect(responseJson.data).to.have.property('items');",
+                  "    pm.expect(responseJson.data.items).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Each cart item has required fields\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    if (responseJson.data.items.length > 0) {",
+                  "        responseJson.data.items.forEach(item => {",
+                  "            pm.expect(item).to.have.property('id');",
+                  "            pm.expect(item).to.have.property('addedAt');",
+                  "            // Should have either itemId or productId (or both for backward compat)",
+                  "            const hasItemId = item.hasOwnProperty('itemId') && item.itemId !== null;",
+                  "            const hasProductId = item.hasOwnProperty('productId') && item.productId !== null;",
+                  "            pm.expect(hasItemId || hasProductId).to.be.true;",
+                  "        });",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"Cart items show correct name field\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    if (responseJson.data.items.length > 0) {",
+                  "        responseJson.data.items.forEach(item => {",
+                  "            // Should have either itemName or productName",
+                  "            pm.expect(item.itemName || item.productName).to.exist;",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Cart Item Count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/cart/{{session_id}}/count",
+              "host": ["{{base_url}}"],
+              "path": ["cart", "{{session_id}}", "count"]
+            },
+            "description": "Get the number of items in the cart"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has count data\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('success');",
+                  "    pm.expect(responseJson).to.have.property('data');",
+                  "    pm.expect(responseJson.data).to.have.property('sessionId');",
+                  "    pm.expect(responseJson.data).to.have.property('count');",
+                  "    pm.expect(responseJson.data.count).to.be.a('number');",
+                  "    pm.expect(responseJson.data.count).to.be.at.least(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Remove Item from Cart (NEW - itemId)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"{{session_id}}\",\n  \"itemId\": 33\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/cart/remove",
+              "host": ["{{base_url}}"],
+              "path": ["cart", "remove"]
+            },
+            "description": "Remove an item from cart using NEW unified item model (itemId). This should match the item added in the 'Add Item to Cart (NEW - itemId)' test."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates success\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('success');",
+                  "    pm.expect(responseJson.success).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"Success message mentions item removal\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.message).to.include('Item removed');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Remove Product from Cart (LEGACY - productId)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"{{session_id}}\",\n  \"productId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/cart/remove",
+              "host": ["{{base_url}}"],
+              "path": ["cart", "remove"]
+            },
+            "description": "Remove a product from cart using LEGACY productId (backward compatibility). This should match the product added in the 'Add Product to Cart (LEGACY - productId)' test."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates success\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('success');",
+                  "    pm.expect(responseJson.success).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Remove Item - Missing Both IDs (Error)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"{{session_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/cart/remove",
+              "host": ["{{base_url}}"],
+              "path": ["cart", "remove"]
+            },
+            "description": "Test error handling when neither productId nor itemId is provided"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message mentions missing ID\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.error || responseJson.message).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Remove Item - Not in Cart (Error)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"{{session_id}}\",\n  \"itemId\": 999\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/cart/remove",
+              "host": ["{{base_url}}"],
+              "path": ["cart", "remove"]
+            },
+            "description": "Test error handling when trying to remove an item that's not in the cart"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message mentions item not found\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.error || responseJson.message).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Clear Entire Cart",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"{{session_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/cart/clear",
+              "host": ["{{base_url}}"],
+              "path": ["cart", "clear"]
+            },
+            "description": "Remove all items from the cart"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates success\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('success');",
+                  "    pm.expect(responseJson.success).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sales Lead Conversion",
+      "item": [
+        {
+          "name": "Convert Cart to Sales Lead",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"{{session_id}}\",\n  \"customerInfo\": {\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"phone\": \"+1234567890\",\n    \"company\": \"Example Corp\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/cart/convert",
+              "host": ["{{base_url}}"],
+              "path": ["cart", "convert"]
+            },
+            "description": "Convert ephemeral cart to a sales lead with customer information"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates success\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('success');",
+                  "    pm.expect(responseJson.success).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains sales lead data\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('data');",
+                  "    pm.expect(responseJson.data).to.have.property('leadId');",
+                  "    pm.expect(responseJson.data).to.have.property('sessionId');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Convert Empty Cart - Error",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"{{session_id}}\",\n  \"customerInfo\": {\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"email\": \"john.doe@example.com\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/cart/convert",
+              "host": ["{{base_url}}"],
+              "path": ["cart", "convert"]
+            },
+            "description": "Test error handling when trying to convert an empty cart"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    }
+  ]
+}

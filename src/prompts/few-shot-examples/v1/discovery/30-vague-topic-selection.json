@@ -1,0 +1,28 @@
+{
+  "id": "example-30",
+  "name": "Vague Topic Selection - Internet",
+  "version": "1.0",
+  "conversationStage": "discovery",
+  "userQuery": "I'm interested in Internet",
+  "reasoning": [
+    "Context: Discovery stage - user selected a topic button but provided no business context",
+    "Available information: Solution area is 'Internet', but no industry, size, or location",
+    "Strategy: Give a brief 1-sentence overview of Internet solutions available",
+    "Then ask 2-3 tailored discovery questions specific to Internet needs",
+    "Return empty recommendedItems - not enough context to recommend specific products"
+  ],
+  "output": {
+    "solution": "Internet",
+    "category": null,
+    "recommendedItems": [],
+    "reply": "We offer fiber broadband, dedicated internet, and satellite connectivity for remote areas.\n\nTo find the best fit:\n- What industry is your business in?\n- How many users need connectivity?\n- Are you in a metro area or remote location?",
+    "confidence": 0.3
+  },
+  "metadata": {
+    "tags": ["vague", "topic-selection", "internet", "discovery", "no-products"],
+    "effectivenessScore": 0.90,
+    "usageCount": 0,
+    "lastUpdated": "2026-04-07",
+    "notes": "Models the topic button click scenario - user selects a solution area without providing business context"
+  }
+}

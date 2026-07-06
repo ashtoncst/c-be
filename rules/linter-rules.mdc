@@ -1,0 +1,239 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Enforces strict TypeScript typing using ESLint configuration and prevents duplicate function implementations before commits.
+globs: src/**/*.ts
+alwaysApply: true
+---
+
+# Enforce Strict TypeScript Typing and Prevent Duplicates
+
+This rule ensures that all TypeScript code adheres to strict typing practices and prevents duplicate function/method implementations before being committed. The goal is to eliminate the use of `any`, ensure all types are accurately defined, and maintain clean, non-duplicated code.
+
+## Pre-Implementation Checks
+
+### 1. Duplicate Function/Method Detection
+**ALWAYS** check the target file for existing function/method names before implementing new code:
+
+#### Required Steps:
+1. **Search existing functions**: Before suggesting any new function/method, search the entire file for existing implementations
+2. **Check method signatures**: Look for methods with the same name but different parameters
+3. **Verify naming conflicts**: Ensure no naming collisions exist
+4. **Suggest renames**: If duplicates exist, suggest descriptive alternative names
+
+#### Search Patterns:
+```typescript
+// Search for these patterns in the target file:
+- "function functionName("
+- "async functionName("
+- "private functionName("
+- "public functionName("
+- "protected functionName("
+- "static functionName("
+- "functionName = ("
+- "functionName: ("
+```
+
+#### Example Check Process:
+```typescript
+// ❌ BAD: Implementing without checking
+export class MyService {
+  // Existing method (not checked)
+  async processDocument() { ... }
+  
+  // Duplicate method added without checking
+  async processDocument() { ... } // DUPLICATE!
+}
+
+// ✅ GOOD: Check first, then rename appropriately
+export class MyService {
+  // Existing method
+  async processDocument() { ... }
+  
+  // New method with descriptive name
+  async processDocumentIncremental() { ... }
+}
+```
+
+### 2. Method Naming Conventions
+When duplicates are found, use these naming patterns:
+
+```typescript
+// Original method
+async handleProcessingFailure() { ... }
+
+// Specific alternatives
+async handleInternalProcessingFailure() { ... }
+async handleUpstreamProcessingFailure() { ... }
+async handleBatchProcessingFailure() { ... }
+
+// Context-specific naming
+async processDocument() { ... }
+async processDocumentShard() { ... }
+async processDocumentIncremental() { ... }
+async processDocumentBatch() { ... }
+```
+
+## Type Safety Requirements
+
+### 1. Eliminate `any` Type Usage
+**REQUIRED**: Replace all instances of `any` with specific types before implementing code changes.
+
+#### Guidelines:
+1. **Run ESLint**: Before committing, run `npm run lint` to check for type errors
+2. **Eliminate `any`**: Replace all instances with specific types, interfaces, `unknown` (with type guards), or generics
+3. **Define Types**: Create interfaces or type aliases based on documentation or usage patterns
+4. **Type Guards**: Use type guards for `unknown` types from external sources
+5. **Function Boundaries**: Ensure all exported functions have explicit parameter and return types
+
+### 2. ESLint Configuration Rules
+This project uses ESLint with `@typescript-eslint` plugin:
+
+- `@typescript-eslint/no-explicit-any`: Disallows explicit `any` usage
+- `@typescript-eslint/no-unsafe-*`: Prevents unsafe operations on `any` types
+- `@typescript-eslint/explicit-module-boundary-types`: Requires explicit types for exported functions
+- `@typescript-eslint/no-non-null-assertion`: Discourages `!` for non-null assertions
+- `@typescript-eslint/ban-types`: Bans problematic built-in types like `Function`, `Object`, `{}`
+
+## Implementation Examples
+
+### ✅ GOOD: Proper Implementation Process
+```typescript
+// Step 1: Check existing file for similar methods
+// Step 2: Verify no naming conflicts
+// Step 3: Implement with proper types
+
+interface ProcessingOptions {
+  documentId: string;
+  operationId: string;
+  batchSize?: number;
+}
+
+export class DocumentService {
+  // Existing method (checked first)
+  async processDocument(data: ProcessingOptions): Promise<ProcessingResult> {
+    // Implementation with specific types
+  }
+  
+  // New method with unique, descriptive name
+  async processDocumentBatch(
+    documents: ProcessingOptions[], 
+    concurrency: number = 3
+  ): Promise<BatchProcessingResult> {
+    // Implementation avoiding duplicates
+  }
+}
+```
+
+### ❌ BAD: What NOT to do
+```typescript
+// DON'T: Implement without checking for duplicates
+export class DocumentService {
+  async processDocument(data: any): Promise<any> { // Wrong: using 'any'
+    // Implementation
+  }
+  
+  // DUPLICATE! Should have checked first
+  async processDocument(options: any): Promise<any> { // Wrong: duplicate + 'any'
+    // Different implementation
+  }
+}
+```
+
+## Type Definition Patterns
+
+### 1. Proper Interface Definitions
+```typescript
+// ✅ GOOD: Explicit interface definitions
+interface EmbeddingProcessingOptions {
+  documentId: string;
+  extractedText: string | null;
+  operationId: string;
+  retryCount?: number;
+}
+
+interface ProcessingResult {
+  success: boolean;
+  chunksProcessed: number;
+  errors: ProcessingError[];
+  duration: number;
+}
+```
+
+### 2. Type Guards for External Data
+```typescript
+// ✅ GOOD: Using unknown with type guards
+function processExternalData(data: unknown): ProcessedData {
+  if (
+    typeof data === 'object' &&
+    data !== null &&
+    'documentId' in data &&
+    typeof (data as any).documentId === 'string'
+  ) {
+    return processValidData(data as ValidDataShape);
+  }
+  throw new ValidationError("Invalid data format");
+}
+```
+
+### 3. Generic Type Definitions
+```typescript
+// ✅ GOOD: Using generics instead of 'any'
+interface Repository<T, K = string> {
+  findById(id: K): Promise<T | null>;
+  create(entity: Omit<T, 'id'>): Promise<T>;
+  update(id: K, updates: Partial<T>): Promise<T>;
+}
+```
+
+## Pre-Commit Checklist
+
+Before implementing any new code:
+
+### 1. Duplicate Detection
+- [ ] Search target file for existing method/function names
+- [ ] Check for similar functionality with different names
+- [ ] Verify no naming conflicts exist
+- [ ] If duplicates found, create descriptive alternative names
+
+### 2. Type Safety
+- [ ] Run `npm run lint` to check for type errors
+- [ ] Eliminate all `any` types
+- [ ] Define proper interfaces for complex objects
+- [ ] Add explicit return types for all exported functions
+- [ ] Use type guards for external/unknown data
+
+### 3. Code Quality
+- [ ] Follow established naming conventions
+- [ ] Ensure method names clearly describe their purpose
+- [ ] Avoid method overloading unless absolutely necessary
+- [ ] Document complex type definitions
+
+## Error Prevention
+
+### Common Issues to Avoid:
+1. **Duplicate method names** with different signatures
+2. **Generic method names** that don't describe specific functionality
+3. **Missing type annotations** on function parameters and returns
+4. **Using `any`** instead of proper type definitions
+5. **Inconsistent naming** between similar methods
+
+### Resolution Patterns:
+```typescript
+// Instead of duplicates, use descriptive names:
+// ❌ processDocument() + processDocument()
+// ✅ processDocument() + processDocumentShard()
+
+// Instead of 'any', use specific types:
+// ❌ function process(data: any): any
+// ✅ function process(data: DocumentData): ProcessingResult
+
+// Instead of generic names, be specific:
+// ❌ handleFailure() + handleFailure()
+// ✅ handleInternalFailure() + handleUpstreamFailure()
+```
+
+By following these enhanced guidelines, we maintain strict type safety while preventing duplicate implementations and ensuring clean, maintainable code.

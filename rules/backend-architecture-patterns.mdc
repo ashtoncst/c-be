@@ -1,0 +1,307 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Backend architecture pattern enforcing DTO -> Model -> Repository -> Service -> Controller -> Route flow
+globs: src/**/*.ts
+alwaysApply: true
+---
+# Backend Architecture Pattern
+
+This project follows a strict layered architecture pattern to ensure separation of concerns, maintainability, and type safety.
+
+## Implementation Sequence
+
+Always implement features in the following order:
+
+1. **DTOs** - Define data transfer objects first
+2. **Models** - Create data models 
+3. **Repositories** - Implement database operations (skip if not needed)
+4. **Services** - Implement business logic
+5. **Controllers** - Create controller methods
+6. **Routes** - Define API routes
+
+## Type Safety
+
+- All types must be explicitly defined
+- Never use `any` type
+- Use interfaces, type aliases, or classes as appropriate
+- Use enums for fixed sets of values
+
+## Code Examples
+
+### 1. DTOs (Data Transfer Objects)
+
+```typescript
+// src/dtos/document.dto.ts
+import {
+  IsString,
+  IsUUID,
+  IsOptional,
+  IsInt,
+  IsUrl,
+  IsEnum,
+  IsDate
+} from "class-validator";
+import { Expose } from "class-transformer";
+
+export class CreateDocumentDto {
+  @IsString()
+  @Expose()
+  title!: string;
+  
+  @IsUrl()
+  @Expose()
+  fileUrl!: string;
+  
+  @IsString()
+  @Expose()
+  mimeType!: string;
+  
+  @IsInt()
+  @Expose()
+  size!: number;
+  
+  @IsUUID()
+  @Expose()
+  userId!: string;
+}
+
+export class UpdateDocumentDto {
+  @IsString()
+  @IsOptional()
+  @Expose()
+  title?: string;
+  
+  @IsString()
+  @IsOptional()
+  @Expose()
+  description?: string;
+}
+
+export class DocumentResponseDto {
+  @IsUUID()
+  @Expose()
+  id!: string;
+  
+  @IsString()
+  @Expose()
+  title!: string;
+  
+  @IsUrl()
+  @Expose()
+  fileUrl!: string;
+  
+  @IsString()
+  @Expose()
+  mimeType!: string;
+  
+  @IsInt()
+  @Expose()
+  size!: number;
+  
+  @IsUUID()
+  @Expose()
+  userId!: string;
+  
+  @IsString()
+  @IsEnum(ProcessingStatus)
+  @Expose()
+  processingStatus!: string;
+  
+  @IsDate()
+  @Expose()
+  createdAt!: Date;
+  
+  @IsDate()
+  @Expose()
+  updatedAt!: Date;
+}
+```
+
+### 2. Models examples
+
+```typescript
+// src/models/document.model.ts
+export enum ProcessingStatus {
+  PENDING = "PENDING",
+  PROCESSING = "PROCESSING",
+  COMPLETED = "COMPLETED",
+  ERROR = "ERROR"
+}
+
+export interface Document {
+  id: string;
+  title: string;
+  fileUrl: string;
+  mimeType: string;
+  size: number;
+  userId: string;
+  processingStatus: ProcessingStatus;
+  createdAt: Date;
+  updatedAt: Date;
+}
+```
+
+### 3. Repositories examples
+
+```typescript
+// src/repositories/document.repository.ts
+import { Document, ProcessingStatus } from "../models/document.model";
+import { getPool } from "../config/database";
+
+export class DocumentRepository {
+  async findById(id: string): Promise<Document | null> {
+    const query = `
+      SELECT * FROM documents 
+      WHERE id = $1
+    `;
+    
+    const result = await getPool().query(query, [id]);
+    
+    if (result.rows.length === 0) {
+      return null;
+    }
+    
+    return result.rows[0] as Document;
+  }
+  
+  async updateStatus(id: string, status: ProcessingStatus): Promise<void> {
+    const query = `
+      UPDATE documents
+      SET processing_status = $1, updated_at = NOW()
+      WHERE id = $2
+    `;
+    
+    await getPool().query(query, [status, id]);
+  }
+}
+```
+
+### 4. Services examples
+
+```typescript
+// src/services/document.service.ts
+import { DocumentRepository } from "../repositories/document.repository";
+import { Document, ProcessingStatus } from "../models/document.model";
+import { CreateDocumentDto } from "../dtos/document.dto";
+import { v4 as uuidv4 } from "uuid";
+
+export class DocumentService {
+  private documentRepository: DocumentRepository;
+  
+  constructor() {
+    this.documentRepository = new DocumentRepository();
+  }
+  
+  async createDocument(dto: CreateDocumentDto): Promise<Document> {
+    const id = uuidv4();
+    // Business logic implementation
+    // Call repository methods
+    return newDocument;
+  }
+  
+  async processDocument(id: string): Promise<void> {
+    const document = await this.documentRepository.findById(id);
+    if (!document) {
+      throw new Error(`Document with ID ${id} not found`);
+    }
+    
+    // Business logic implementation
+    await this.documentRepository.updateStatus(id, ProcessingStatus.PROCESSING);
+  }
+}
+```
+
+### 5. Controllers examples
+
+```typescript
+// src/controllers/document.controller.ts
+import { Request, Response } from "express";
+import { DocumentService } from "../services/document.service";
+import { CreateDocumentDto } from "../dtos/document.dto";
+
+export class DocumentController {
+  private documentService: DocumentService;
+  
+  constructor() {
+    this.documentService = new DocumentService();
+  }
+  
+  async createDocument(req: Request, res: Response): Promise<void> {
+    try {
+      const dto: CreateDocumentDto = req.body;
+      const document = await this.documentService.createDocument(dto);
+      res.status(201).json(document);
+    } catch (error) {
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Unknown error" 
+      });
+    }
+  }
+  
+  async processDocument(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      await this.documentService.processDocument(id);
+      res.status(202).json({ message: "Processing started" });
+    } catch (error) {
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Unknown error" 
+      });
+    }
+  }
+}
+```
+
+### 6. Routes examples
+
+```typescript
+// src/routes/document.routes.ts
+import { Router } from "express";
+import { DocumentController } from "../controllers/document.controller";
+
+const router = Router();
+const documentController = new DocumentController();
+
+router.post("/", (req, res) => documentController.createDocument(req, res));
+router.post("/:id/process", (req, res) => documentController.processDocument(req, res));
+
+export default router;
+```
+
+## Anti-patterns to avoid
+
+```typescript
+// ❌ NEVER use any type
+const processData = (data: any) => { /* ... */ }
+
+// ❌ NEVER skip proper typing or validation decorators
+class BadDocumentDto {
+  title: string; // Missing validation decorators
+  fileUrl: string; // Missing @Expose()
+}
+
+// ✅ ALWAYS use proper typing with decorators
+class GoodDocumentDto {
+  @IsString()
+  @Expose()
+  title!: string; // Required field with non-null assertion
+
+  @IsString()
+  @IsOptional()
+  @Expose()
+  description?: string; // Optional field
+}
+
+// ✅ ALWAYS define return types
+async function getData(): Promise<DocumentResponseDto[]> {
+  const response = await fetch('/api/data');
+  return plainToInstance(
+    DocumentResponseDto, 
+    await response.json()
+  );
+}
+```

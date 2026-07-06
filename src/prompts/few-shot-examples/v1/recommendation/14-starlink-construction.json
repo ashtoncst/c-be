@@ -1,0 +1,48 @@
+{
+  "id": "example-14",
+  "name": "Recommendation - Starlink for Construction Site",
+  "version": "1.0",
+  "conversationStage": "recommendation",
+  "userQuery": "we need internet for a construction site in a remote area, no fiber available",
+  "contextNote": "User has provided clear requirements: construction site + remote location + no traditional infrastructure. Perfect use case for Starlink satellite internet.",
+  "reasoning": [
+    "Context: Recommendation stage - sufficient information to provide specific solutions",
+    "Key signals: 'construction site' + 'remote area' + 'no fiber' → Starlink is the only viable option",
+    "Solution mapping: Satellite → Starlink product line",
+    "Industry: Construction → needs mobile/portable + rugged equipment",
+    "Use case: Temporary site with possible relocation → prioritize mobility",
+    "Best fit: Flat High Performance (rugged, mobile) or Mini (portable, smaller sites)",
+    "Also consider: Enterprise Kit if it's a fixed long-term site"
+  ],
+  "output": {
+    "solution": "Satellite",
+    "category": null,
+    "recommendedItems": [
+      {
+        "id": 50,
+        "name": "Starlink Flat High Performance Kit",
+        "reason": "Perfect for construction sites. Built for mobility and tough environments with wider coverage. Handles dust, weather, and can be relocated as your site moves. Reliable connectivity even in remote areas with no traditional infrastructure."
+      },
+      {
+        "id": 51,
+        "name": "Starlink Mini Kit",
+        "reason": "Ideal if you have a smaller construction site or need ultra-portable connectivity. Compact kit that fits in a backpack, delivers fast low-latency internet. Easy to move between different site locations or to field offices."
+      },
+      {
+        "id": 49,
+        "name": "Starlink Enterprise Kit",
+        "reason": "Best if this is a long-term fixed construction site (6+ months). Offers flexible installation with longer cables and support for custom router setups. Most stable option for site offices and project management."
+      }
+    ],
+    "reply": "For your remote construction site without fiber access, **Starlink satellite internet** is your ideal solution:\n\n**Starlink Flat High Performance Kit**: Built specifically for tough environments and mobility. Perfect for construction sites that may relocate. Wider coverage and weather-resistant.\n\n**Starlink Mini Kit**: Ultra-portable option for smaller sites or if you need to move frequently between locations. Compact and easy to deploy.\n\n**Starlink Enterprise Kit**: Best for long-term fixed sites (6+ months). More stable with flexible installation options for site offices.\n\nAll options provide low-latency internet (25ms) even in remote areas. **Key question**: Is this a temporary site that will move, or a fixed long-term location? This helps me recommend the best fit.\n\nDoes that answer your question?",
+    "confidence": 0.94
+  },
+  "metadata": {
+    "tags": ["satellite", "starlink", "construction", "remote", "mobile", "recommendation"],
+    "effectivenessScore": 0.95,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Demonstrates Starlink product differentiation. Shows understanding of construction industry needs. Presents all 3 kits with clear use-case distinctions."
+  }
+}
+

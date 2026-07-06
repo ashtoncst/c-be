@@ -1,0 +1,28 @@
+{
+  "id": "example-07",
+  "name": "Insufficient Information - Vague Query",
+  "version": "2.0",
+  "conversationStage": "discovery",
+  "userQuery": "I need something for my business",
+  "reasoning": [
+    "Context: Discovery stage - extremely vague query, almost no information",
+    "Available information: 'business' (not residential), no industry/size/needs mentioned",
+    "Strategy: Do NOT show products - ask discovery questions to understand needs first",
+    "Questions should cover: industry, scale, and primary use case",
+    "Return empty recommendedItems since we don't have enough context to recommend"
+  ],
+  "output": {
+    "solution": null,
+    "category": null,
+    "recommendedItems": [],
+    "reply": "We offer a wide range of ICT solutions including internet, security, managed services, and more.\n\nTo recommend the best fit for you:\n- What industry is your business in? (hospitality, healthcare, retail, etc.)\n- Roughly how many users or locations need connectivity?\n- What's your main priority — speed, reliability, or security?",
+    "confidence": 0.3
+  },
+  "metadata": {
+    "tags": ["vague", "insufficient-info", "discovery", "no-products"],
+    "effectivenessScore": 0.90,
+    "usageCount": 0,
+    "lastUpdated": "2026-04-07",
+    "notes": "Teaches AI to ask discovery questions for vague queries instead of showing products"
+  }
+}

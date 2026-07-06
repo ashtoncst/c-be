@@ -1,0 +1,33 @@
+{
+  "id": "example-13",
+  "name": "Feedback - Ready to Proceed",
+  "version": "1.0",
+  "conversationStage": "feedback",
+  "userQuery": "how can I get started with the SD-WAN solution?",
+  "contextNote": "Bot just showed SD-WAN recommendations and asked 'Does that answer your question?'. User is ready to move forward and wants to know next steps for purchasing/implementation.",
+  "reasoning": [
+    "Context: Feedback stage - user is satisfied with recommendations and ready to proceed",
+    "User signal: 'how can I get started' = high buying intent, wants concrete next steps",
+    "Important: This is DIFFERENT from 'yes' confirmation - user is explicitly asking for procurement process",
+    "Action: Provide clear, actionable next steps for moving forward",
+    "Response structure: [Acknowledge excitement] + [Next Steps: Sales/Demo/Quote] + [Timeline/Process] + [Anything else?]",
+    "CRITICAL: Do NOT show more products - user has decided",
+    "CRITICAL: Focus on HOW to proceed, not WHAT to buy",
+    "CRITICAL: Move toward closing stage - offer sales contact, demo, or quote request"
+  ],
+  "output": {
+    "solution": "Transport",
+    "category": "SD-WAN",
+    "recommendedItems": [],
+    "reply": "Excellent! I'm glad the SD-WAN solution fits your needs. Here's how to get started:\n\n**Next Steps**:\n1. **Schedule a Consultation**: Our SD-WAN specialists will assess your current infrastructure and multi-site requirements (30-45 min call)\n2. **Site Assessment**: We'll evaluate each location's connectivity and bandwidth needs\n3. **Custom Quote**: You'll receive a detailed proposal with pricing, implementation timeline, and ROI analysis\n4. **Demo Available**: We can show you the centralized management dashboard and how traffic routing works\n\n**Timeline**: Most SD-WAN deployments take 2-4 weeks from approval to full implementation.\n\n**Contact Options**:\n- **Call**: 1-800-CONVERGE (speak with SD-WAN specialist)\n- **Email**: GlobalBusiness@convergeict.com (request pricing)\n- **Online**: I can have a specialist reach out to you within 24 hours\n\nWhich option works best for you? Or is there anything else I can help you with?",
+    "confidence": 0.96
+  },
+  "metadata": {
+    "tags": ["feedback", "ready-to-buy", "high-intent", "next-steps", "closing", "procurement"],
+    "effectivenessScore": 0.97,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Teaches AI to recognize high buying intent and provide actionable next steps. Transitions toward closing stage. No product recommendations - focus on process and contact information."
+  }
+}
+

@@ -1,0 +1,32 @@
+{
+  "id": "example-24",
+  "name": "Refinement - Optical Transport Network for Data Centers",
+  "version": "1.0",
+  "conversationStage": "refinement",
+  "userQuery": "we need to connect our two data centers with high capacity, over 10 gbps",
+  "contextNote": "Previous turn: Bot asked 'What capacity do you need between sites - standard speeds (up to 1 Gbps) or high-capacity (10 Gbps+)?'. User confirms they need very high capacity (10+ Gbps) for data center interconnection.",
+  "reasoning": [
+    "Context: Refinement stage - user is specifying high-capacity requirements",
+    "Previous query was likely: 'we need to connect data centers' (vague)",
+    "User signal: 'two data centers' + '10+ Gbps' → Optical Transport Network or DC Express",
+    "Key insight: 10+ Gbps requirement rules out standard connectivity - needs optical transport",
+    "Solution mapping: Transport → Optical Transport Network or DC Express",
+    "Use case: Data center interconnection (DCI) for replication, backup, high-volume data transfer",
+    "Refinement needed: Distance, protocols, latency requirements, redundancy"
+  ],
+  "output": {
+    "solution": "Transport",
+    "category": "Optical Transport Network",
+    "recommendedItems": [],
+    "reply": "Excellent! For **high-capacity data center interconnection (10+ Gbps)**, we have specialized optical transport solutions:\n\n**Optical Transport Network**: Secure, scalable, reliable and flexible optical transport network. Perfect for data center interconnection with high capacity and low latency. Supports various protocols and can scale from 10 Gbps to 100 Gbps+.\n\n**DC Express**: Specifically designed to connect data centers that host your IT services and network elements. Supports different protocols for seamless data center connectivity.\n\nBoth solutions provide the high-capacity, low-latency connectivity essential for data center operations.\n\nTo design the right solution:\n\n**Infrastructure Requirements**:\n1. **Distance**: How far apart are your two data centers? (same metro area, different cities, different regions?)\n2. **Capacity**: Do you need 10 Gbps, 40 Gbps, or 100 Gbps?\n3. **Protocols**: What protocols/interfaces do you need? (Ethernet, Fiber Channel, DWDM?)\n4. **Latency**: What's your maximum acceptable latency? (sub-millisecond, <5ms, <10ms?)\n5. **Use Case**: Primary purpose? (DR replication, live data sync, backup, storage connectivity?)\n6. **Redundancy**: Do you need diverse paths for 99.99%+ availability?\n\n**Typical Use Cases**:\n- Real-time database replication\n- Storage area network (SAN) extension\n- Disaster recovery (DR) data synchronization\n- Cloud service provider infrastructure\n\nWhat's the distance between your data centers and primary use case?",
+    "confidence": 0.84
+  },
+  "metadata": {
+    "tags": ["refinement", "optical-transport", "dc-express", "datacenter", "high-capacity", "dci", "10gbps"],
+    "effectivenessScore": 0.91,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Demonstrates refinement for high-capacity data center connectivity. Shows understanding of optical transport vs standard connectivity. Covers under-represented Optical Transport Network and DC Express categories."
+  }
+}
+

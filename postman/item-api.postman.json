@@ -1,0 +1,431 @@
+{
+  "info": {
+    "_postman_id": "item-api-collection",
+    "name": "Converge Item API (NEW)",
+    "description": "Complete API tests for the unified Item model - solutions, categories, and products",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get All Solutions",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/items/solutions",
+          "host": ["{{base_url}}"],
+          "path": ["items", "solutions"]
+        },
+        "description": "Get all top-level solutions (e.g., Connectivity Solutions, Managed Services)"
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response is array of solutions\", function () {",
+              "    const responseJson = pm.response.json();",
+              "    pm.expect(responseJson).to.be.an('array');",
+              "    pm.expect(responseJson.length).to.be.above(0);",
+              "});",
+              "",
+              "pm.test(\"Each solution has required fields\", function () {",
+              "    const responseJson = pm.response.json();",
+              "    responseJson.forEach(solution => {",
+              "        pm.expect(solution).to.have.property('id');",
+              "        pm.expect(solution).to.have.property('name');",
+              "        pm.expect(solution).to.have.property('itemType');",
+              "        pm.expect(solution.itemType).to.eql('solution');",
+              "        pm.expect(solution).to.have.property('isActive');",
+              "        pm.expect(solution.isActive).to.be.true;",
+              "    });",
+              "});",
+              "",
+              "// Store first solution ID for subsequent tests",
+              "if (pm.response.code === 200) {",
+              "    const solutions = pm.response.json();",
+              "    if (solutions.length > 0) {",
+              "        pm.environment.set('solution_id', solutions[0].id);",
+              "    }",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get All Categories",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/items/categories",
+          "host": ["{{base_url}}"],
+          "path": ["items", "categories"]
+        },
+        "description": "Get all categories across all solutions"
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response is array of categories\", function () {",
+              "    const responseJson = pm.response.json();",
+              "    pm.expect(responseJson).to.be.an('array');",
+              "});",
+              "",
+              "pm.test(\"Each category has parentItemId\", function () {",
+              "    const responseJson = pm.response.json();",
+              "    responseJson.forEach(category => {",
+              "        pm.expect(category).to.have.property('itemType');",
+              "        pm.expect(category.itemType).to.eql('category');",
+              "        pm.expect(category).to.have.property('parentItemId');",
+              "    });",
+              "});",
+              "",
+              "// Store first category ID",
+              "if (pm.response.code === 200) {",
+              "    const categories = pm.response.json();",
+              "    if (categories.length > 0) {",
+              "        pm.environment.set('category_id', categories[0].id);",
+              "    }",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Categories by Solution",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/items/categories?solution_id={{solution_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["items", "categories"],
+          "query": [
+            {
+              "key": "solution_id",
+              "value": "{{solution_id}}"
+            }
+          ]
+        },
+        "description": "Get categories filtered by specific solution"
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"All categories belong to solution\", function () {",
+              "    const responseJson = pm.response.json();",
+              "    const solutionId = parseInt(pm.environment.get('solution_id'));",
+              "    responseJson.forEach(category => {",
+              "        pm.expect(category.parentItemId).to.eql(solutionId);",
+              "    });",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get All Products",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/items/products",
+          "host": ["{{base_url}}"],
+          "path": ["items", "products"]
+        },
+        "description": "Get all products across all categories"
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response is array of products\", function () {",
+              "    const responseJson = pm.response.json();",
+              "    pm.expect(responseJson).to.be.an('array');",
+              "});",
+              "",
+              "// Store first product as item_id for cart tests",
+              "if (pm.response.code === 200) {",
+              "    const products = pm.response.json();",
+              "    if (products.length > 0) {",
+              "        pm.environment.set('item_id', products[0].id);",
+              "    }",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Products by Category",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/items/products?category_id={{category_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["items", "products"],
+          "query": [
+            {
+              "key": "category_id",
+              "value": "{{category_id}}"
+            }
+          ]
+        },
+        "description": "Get products filtered by category"
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"All products have itemType=product\", function () {",
+              "    const responseJson = pm.response.json();",
+              "    responseJson.forEach(product => {",
+              "        pm.expect(product.itemType).to.eql('product');",
+              "    });",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Item Hierarchy",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/items/hierarchy",
+          "host": ["{{base_url}}"],
+          "path": ["items", "hierarchy"]
+        },
+        "description": "Get complete hierarchy: solutions → categories → product counts"
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has hierarchical structure\", function () {",
+              "    const responseJson = pm.response.json();",
+              "    pm.expect(responseJson).to.be.an('array');",
+              "    if (responseJson.length > 0) {",
+              "        pm.expect(responseJson[0]).to.have.property('categories');",
+              "        pm.expect(responseJson[0].categories).to.be.an('array');",
+              "    }",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Single Item by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/items/{{item_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["items", "{{item_id}}"]
+        },
+        "description": "Get detailed information about a specific item (solution, category, or product)"
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Item has all required fields\", function () {",
+              "    const item = pm.response.json();",
+              "    pm.expect(item).to.have.property('id');",
+              "    pm.expect(item).to.have.property('name');",
+              "    pm.expect(item).to.have.property('itemType');",
+              "    pm.expect(item).to.have.property('isActive');",
+              "    pm.expect(item).to.have.property('createdAt');",
+              "});",
+              "",
+              "pm.test(\"Item type is valid\", function () {",
+              "    const item = pm.response.json();",
+              "    pm.expect(['solution', 'category', 'product']).to.include(item.itemType);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Search Items",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/items?search=internet&limit=5",
+          "host": ["{{base_url}}"],
+          "path": ["items"],
+          "query": [
+            {
+              "key": "search",
+              "value": "internet"
+            },
+            {
+              "key": "limit",
+              "value": "5"
+            }
+          ]
+        },
+        "description": "Search items by name or description across all types"
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has pagination info\", function () {",
+              "    const responseJson = pm.response.json();",
+              "    pm.expect(responseJson).to.have.property('items');",
+              "    pm.expect(responseJson).to.have.property('total');",
+              "    pm.expect(responseJson).to.have.property('limit');",
+              "    pm.expect(responseJson).to.have.property('offset');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Filter Items by Type",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/items?item_type=product&limit=10",
+          "host": ["{{base_url}}"],
+          "path": ["items"],
+          "query": [
+            {
+              "key": "item_type",
+              "value": "product"
+            },
+            {
+              "key": "limit",
+              "value": "10"
+            }
+          ]
+        },
+        "description": "Filter items by type (solution, category, or product)"
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"All items are products\", function () {",
+              "    const responseJson = pm.response.json();",
+              "    responseJson.items.forEach(item => {",
+              "        pm.expect(item.itemType).to.eql('product');",
+              "    });",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Target Audiences",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/items/target-audiences",
+          "host": ["{{base_url}}"],
+          "path": ["items", "target-audiences"]
+        },
+        "description": "Get all available target audiences"
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response is array of audiences\", function () {",
+              "    const responseJson = pm.response.json();",
+              "    pm.expect(responseJson).to.be.an('array');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    }
+  ]
+}

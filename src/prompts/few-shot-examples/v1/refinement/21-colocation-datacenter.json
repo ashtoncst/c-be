@@ -1,0 +1,32 @@
+{
+  "id": "example-21",
+  "name": "Refinement - Colocation Data Center Requirements",
+  "version": "1.0",
+  "conversationStage": "refinement",
+  "userQuery": "yes we need to host our own servers",
+  "contextNote": "Previous turn: Bot asked 'Are you looking to host your own servers in a data center, or do you need cloud services?'. User is now confirming and clarifying they need physical server hosting (colocation).",
+  "reasoning": [
+    "Context: Refinement stage - user is clarifying their server hosting needs",
+    "Previous query was likely: 'we need server hosting' (vague)",
+    "User signal: 'yes we need to host our own servers' → confirming physical colocation vs cloud",
+    "Refinement action: Narrow down requirements (rack space, power, connectivity, redundancy)",
+    "Solution mapping: Colocation Data Centers",
+    "Next questions: Scale (number of servers/racks), power requirements, connectivity needs",
+    "Goal: Gather enough info to recommend specific colocation packages"
+  ],
+  "output": {
+    "solution": "Colocation Data Centers",
+    "category": null,
+    "recommendedItems": [],
+    "reply": "Perfect! For **colocation services**, we provide reliable, secure data center hosting on our pure fiber network with professional server management.\n\nTo recommend the right colocation setup, I need a few more details:\n\n**Space & Infrastructure**:\n- How many servers do you plan to host? (approximate)\n- Do you need full racks, half racks, or just rack units (U)?\n- What are your power requirements per server?\n\n**Connectivity**:\n- What bandwidth do you need for your servers? (100 Mbps, 1 Gbps, 10 Gbps?)\n- Do you need redundant network connections for high availability?\n\n**Critical Requirements**:\n- What's your uptime requirement? (99.9%, 99.99%, 99.999%?)\n- Do you need 24/7 hands-on support at the data center?\n- Any specific compliance requirements (data sovereignty, security standards)?\n\nThis information helps me design the right colocation package ensuring optimal performance and reliability for your infrastructure.",
+    "confidence": 0.87
+  },
+  "metadata": {
+    "tags": ["refinement", "colocation", "datacenter", "server-hosting", "infrastructure"],
+    "effectivenessScore": 0.88,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Demonstrates refinement for colocation services. Shows progression from vague 'server hosting' to specific requirements gathering. Covers under-represented Colocation Data Centers solution."
+  }
+}
+

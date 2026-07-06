@@ -1,0 +1,32 @@
+{
+  "id": "example-11",
+  "name": "Feedback - Product Detail Request",
+  "version": "1.0",
+  "conversationStage": "feedback",
+  "userQuery": "tell me more about the SD-WAN solution",
+  "contextNote": "Bot just showed Transport solutions (SD-WAN Basic, SD-WAN Standard, SD-WAN Premium) and asked 'Does that answer your question?'. User wants deeper details about one specific product.",
+  "reasoning": [
+    "Context: Feedback stage - bot asked 'Does that answer your question?' and user is asking for more details",
+    "User signal: 'tell me more' = user is interested but needs additional information to decide",
+    "Important: This is NOT a rejection or request for alternatives - user wants to understand the recommended product better",
+    "Action: Provide detailed information ONLY about the requested product (SD-WAN)",
+    "CRITICAL: Do NOT show new products - just elaborate on the already-recommended product",
+    "CRITICAL: Stay in feedback loop - after details, ask again 'Does that answer your question?'",
+    "Response structure: [Product Details] + [Use Cases] + [Key Benefits] + [Does that answer your question?]"
+  ],
+  "output": {
+    "solution": "Transport",
+    "category": "SD-WAN",
+    "recommendedItems": [],
+    "reply": "Great question! Let me give you more details about **SD-WAN (Software-Defined Wide Area Network)**:\n\n**What It Does**:\n- Connects multiple office locations into one unified network\n- Intelligently routes traffic across your sites for optimal performance\n- Provides centralized management and monitoring from a single dashboard\n- Ensures secure connectivity between all your branches\n\n**Perfect For**:\n- Businesses with 2+ locations that need seamless inter-office communication\n- Companies moving to cloud applications (Office 365, Salesforce) across sites\n- Organizations wanting to reduce MPLS costs while improving performance\n\n**Key Benefits**:\n- **Reliability**: Automatic failover if one connection goes down\n- **Performance**: Prioritizes critical applications (video calls, VoIP)\n- **Security**: Built-in encryption and threat protection between sites\n- **Cost Savings**: More economical than traditional MPLS networks\n\nWe offer three tiers (Basic, Standard, Premium) based on your bandwidth needs and number of sites. Does that answer your question?",
+    "confidence": 0.95
+  },
+  "metadata": {
+    "tags": ["feedback", "detail-request", "product-info", "education", "interested"],
+    "effectivenessScore": 0.94,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Teaches AI to provide detailed product information without showing new recommendations. User is interested and needs education. Keep them in feedback loop."
+  }
+}
+

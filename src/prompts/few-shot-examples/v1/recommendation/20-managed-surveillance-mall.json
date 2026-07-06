@@ -1,0 +1,48 @@
+{
+  "id": "example-20",
+  "name": "Recommendation - Managed Surveillance for Shopping Mall",
+  "version": "1.0",
+  "conversationStage": "recommendation",
+  "userQuery": "we need security cameras and access control for our shopping mall",
+  "contextNote": "User has provided: shopping mall + security cameras + access control. Managed Surveillance solution with specific features.",
+  "reasoning": [
+    "Context: Recommendation stage - commercial property with security requirements",
+    "Key signals: 'shopping mall' + 'security cameras' + 'access control' → Managed Surveillance",
+    "Solution mapping: Managed Services → Managed Surveillance category",
+    "Industry: Retail/Commercial → high foot traffic, theft prevention, access control",
+    "Required features: Smart Cameras (monitoring) + Access Control (entry management) + People Counting",
+    "Mall-specific needs: Perimeter, entry/exit, people counting (tenant analytics)",
+    "Managed service: AI-powered, expert-managed, reduces security staff burden"
+  ],
+  "output": {
+    "solution": "Managed Services",
+    "category": "Managed Surveillance",
+    "recommendedItems": [
+      {
+        "id": 68,
+        "name": "Smart Cameras",
+        "reason": "AI-powered surveillance cameras providing 24/7 monitoring of your mall. Smart Detection identifies suspicious activity, loitering, and security incidents. Essential for common areas, parking, entrances, and tenant spaces. Provides evidence for incident investigation and loss prevention."
+      },
+      {
+        "id": 69,
+        "name": "Access Control",
+        "reason": "Manages secure access to restricted areas (back offices, maintenance rooms, loading docks). Controls who enters where and when. Critical for shopping mall security - limits access to authorized personnel only. Integrates with surveillance for complete security management."
+      },
+      {
+        "id": 70,
+        "name": "People Counting",
+        "reason": "Valuable analytics for mall operations. Tracks foot traffic patterns, peak hours, and tenant area popularity. Helps with tenant negotiations (foot traffic data), marketing decisions, and security staffing optimization. AI-powered accuracy for mall-wide insights."
+      }
+    ],
+    "reply": "Excellent! For your shopping mall security, I recommend our **Managed Surveillance solution** with AI-powered features:\n\n**Smart Cameras**: 24/7 AI-powered monitoring across your mall. Smart Detection identifies suspicious activity, loitering, and security incidents automatically. Coverage for common areas, parking, entrances, and storefronts.\n\n**Access Control**: Secure management of restricted areas (back offices, loading docks, maintenance). Controls who accesses where and when. Essential for mall security and tenant safety.\n\n**People Counting**: Valuable business intelligence - track foot traffic, peak hours, and popular areas. Data helps with tenant negotiations, marketing, and operational decisions.\n\n**Why Managed**:\n- Expert 24/7 monitoring and management\n- AI reduces false alarms and security staff burden  \n- Compliant with global security standards\n- Scalable across your entire mall property\n- Quick incident response and investigation\n\n**Additional options**: Entry/Exit Management, Perimeter Management, Visitor Management (if needed for office areas).\n\n**Key questions**:\n1. How large is your mall (sq meters) and how many cameras needed?\n2. Do you need integration with existing security systems?\n\nDoes that answer your question?",
+    "confidence": 0.91
+  },
+  "metadata": {
+    "tags": ["managed-surveillance", "security", "mall", "retail", "access-control", "cameras", "recommendation"],
+    "effectivenessScore": 0.92,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Demonstrates Managed Surveillance product line. Shows mall-specific use cases and benefits. Highlights AI features and business intelligence value beyond security."
+  }
+}
+

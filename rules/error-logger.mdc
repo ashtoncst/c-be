@@ -1,0 +1,660 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Enforces consistent error handling and logging patterns with proper types and parameters for the Senate BE project
+globs: src/**/*.ts
+alwaysApply: true
+---
+
+# Error Handling and Logging Standards
+
+This rule ensures consistent, type-safe error handling and logging across the entire Senate BE codebase. It enforces the use of proper error types, logging patterns, and parameter structures to maintain code quality and debugging capabilities.
+
+## I. Error Handling Hierarchy
+
+### 1. Base Error Classes (from `src/utils/errors.ts`)
+Use these for simple domain errors without HTTP context:
+
+```typescript
+// Simple domain errors
+import { 
+  BaseError, 
+  BadRequestError, 
+  NotFoundError, 
+  UnauthorizedError, 
+  ForbiddenError, 
+  ConflictError, 
+  ValidationError 
+} from "../utils/errors.js";
+
+// Usage
+throw new NotFoundError("Document not found");
+throw new ForbiddenError("Access denied to this document");
+throw new ValidationError("Invalid document format");
+```
+
+### 2. App Errors (from `src/middleware/errorHandler.ts`)
+Use these for service-layer errors with HTTP status codes:
+
+```typescript
+import { 
+  AppError, 
+  DatabaseError, 
+  AuthError, 
+  NotFoundError, 
+  ValidationError 
+} from "../middleware/errorHandler.js";
+
+// Usage with status codes and cause chaining
+throw new AppError("Document processing failed", 500, { cause: originalError });
+throw new DatabaseError("Connection to OCR database failed");
+throw new ValidationError("Document metadata validation failed", { 
+  title: "Title is required",
+  content_type: "Invalid content type" 
+});
+```
+
+### 3. HTTP Errors (from `src/utils/http-errors.ts`)
+Use these for controller-layer errors with detailed HTTP responses:
+
+```typescript
+import { HttpError, errorTypes } from "../utils/http-errors.js";
+
+// Usage in controllers
+throw errorTypes.badRequest("Invalid document upload", { field: "file", reason: "unsupported_format" });
+throw errorTypes.forbidden("Access denied to document", { documentId: docId, userId: user.id });
+throw errorTypes.notFound("Document not found", { documentId: docId });
+throw errorTypes.validation("Document validation failed", { errors: validationResults });
+```
+
+## II. Error Handling Patterns
+
+### 1. Service Layer Error Handling
+**REQUIRED**: Use `executeDbOperation` wrapper for all database operations:
+
+```typescript
+import { executeDbOperation, throwIfNotFound } from "../utils/errorUtils.js";
+import { AppError, DatabaseError } from "../middleware/errorHandler.js";
+
+// CORRECT - Document service example
+async getDocumentById(id: string): Promise<DocumentModel> {
+  return executeDbOperation(
+    async () => {
+      const document = await this.repository.findById(id);
+      throwIfNotFound(document, "Document", id);
+      return document;
+    },
+    "document",
+    "getDocumentById"
+  );
+}
+
+// CORRECT - OCR service example
+async processDocument(documentId: string, filePath: string): Promise<void> {
+  return executeDbOperation(
+    async () => {
+      await this.ocrRepository.updateProcessingStatus(documentId, {
+        processing_status: ProcessingStatus.PROCESSING
+      });
+      
+      const result = await this.documentAiService.processDocument(filePath);
+      if (!result) {
+        throw new AppError("Document AI processing failed", 500);
+      }
+      
+      await this.ocrRepository.createOrUpdateExtractedText(documentId, {
+        extracted_text: result.text,
+        processing_status: ProcessingStatus.COMPLETED
+      });
+    },
+    "document_ocr",
+    "processDocument"
+  );
+}
+
+// INCORRECT - No error wrapper
+async getDocumentById(id: string): Promise<DocumentModel> {
+  const document = await this.repository.findById(id);
+  if (!document) throw new Error("Document not found"); // Wrong error type
+  return document;
+}
+```
+
+### 2. OCR and Document Processing Error Handling
+**REQUIRED**: Use specific error patterns for OCR operations:
+
+```typescript
+// CORRECT - OCR service error handling
+async extractTextFromDocument(documentId: string, filePath: string): Promise<OcrResult> {
+  try {
+    logger.info("Starting OCR processing", { documentId, filePath });
+    
+    const result = await this.geminiService.extractTextFromPdf(filePath);
+    
+    logger.info("OCR processing completed", { 
+      documentId, 
+      textLength: result.extractedText.length,
+      pageCount: result.pageCount 
+    });
+    
+    return result;
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    
+    logger.error("OCR processing failed", error as Error, {
+      documentId,
+      filePath,
+      errorType: typeof error
+    });
+    
+    await this.ocrRepository.updateProcessingStatus(documentId, {
+      processing_status: ProcessingStatus.ERROR,
+      processing_error: errorMessage
+    });
+    
+    throw new AppError(`OCR processing failed: ${errorMessage}`, 500, { cause: error });
+  }
+}
+```
+
+### 3. Authorization Error Handling
+**REQUIRED**: Use specific authorization checks with proper error types:
+
+```typescript
+// CORRECT
+async updateDocument(id: string, dto: UpdateDocumentDto, userId: string): Promise<DocumentModel> {
+  const document = await this.getDocumentById(id);
+  
+  if (document.user_id !== userId && !(await this.userService.isAdmin(userId))) {
+    logger.warn("Authorization denied for document update", {
+      documentId: id,
+      ownerId: document.user_id,
+      requestingUserId: userId,
+      operation: "updateDocument"
+    });
+    throw new ForbiddenError("You can only update your own documents");
+  }
+  
+  return this.repository.update(id, dto, userId);
+}
+
+// INCORRECT
+async updateDocument(id: string, dto: UpdateDocumentDto, userId: string): Promise<DocumentModel> {
+  const document = await this.getDocumentById(id);
+  if (document.user_id !== userId) {
+    throw new Error("Not allowed"); // Generic error
+  }
+  return this.repository.update(id, dto, userId);
+}
+```
+
+### 4. Controller Error Handling
+**REQUIRED**: Use `asyncHandler` wrapper and proper HTTP error types:
+
+```typescript
+import { asyncHandler } from "../middleware/errorHandler.js";
+import { errorTypes } from "../utils/http-errors.js";
+
+// CORRECT
+export const uploadDocument = asyncHandler(async (req: Request, res: Response) => {
+  const { file } = req;
+  const userId = req.user?.id;
+  
+  if (!file) {
+    throw errorTypes.badRequest("File is required for document upload");
+  }
+  
+  if (!userId) {
+    throw errorTypes.unauthorized("User authentication required");
+  }
+  
+  logger.info("Document upload initiated", {
+    userId,
+    fileName: file.originalname,
+    fileSize: file.size,
+    mimeType: file.mimetype
+  });
+  
+  const result = await billLibraryService.uploadAndProcessDocument(file, req.body, userId);
+  
+  logger.info("Document upload completed", {
+    userId,
+    documentId: result.id,
+    fileName: file.originalname
+  });
+  
+  res.status(201).json({ success: true, data: result });
+});
+
+// INCORRECT - No asyncHandler wrapper
+export const uploadDocument = async (req: Request, res: Response) => {
+  try {
+    const result = await billLibraryService.uploadAndProcessDocument(req.file, req.body, req.user.id);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: "Upload failed" }); // Manual error handling
+  }
+};
+```
+
+## III. Logging Standards
+
+### 1. Logger Initialization
+**REQUIRED**: Create service-specific logger instances using the project's custom Logger:
+
+```typescript
+import { Logger } from "../utils/logger.js";
+
+// CORRECT - Service-specific logger
+const logger = new Logger({ serviceName: "BillLibraryService" });
+const logger = new Logger({ serviceName: "OcrService" });
+const logger = new Logger({ serviceName: "GeminiService" });
+const logger = new Logger({ serviceName: "DocumentController" });
+
+// INCORRECT - Generic or missing logger
+const logger = console; // Don't use console directly
+```
+
+### 2. Logging Levels and Metadata
+
+#### Debug Logging
+```typescript
+// CORRECT - Structured metadata for debugging
+logger.debug("Processing document request", {
+  documentId: document.id,
+  operation: "uploadAndProcessDocument",
+  userId: user.id,
+  fileSize: file.size,
+  mimeType: file.mimetype
+});
+
+// INCORRECT - String concatenation
+logger.debug(`Processing document ${document.id} for user ${user.id}`);
+```
+
+#### Info Logging
+```typescript
+// CORRECT - Important business events
+logger.info("Document OCR processing started", {
+  documentId: document.id,
+  engine: "GEMINI",
+  filePath: document.file_path,
+  userId: user.id,
+  operationId: `ocr_${document.id}_${Date.now()}`
+});
+
+logger.info("Document processing completed", {
+  documentId: document.id,
+  processingStatus: ProcessingStatus.COMPLETED,
+  textLength: extractedText.length,
+  pageCount: result.pageCount,
+  processingDuration: Date.now() - startTime
+});
+```
+
+#### Warning Logging
+```typescript
+// CORRECT - OCR and service warnings
+logger.warn("OCR processing timeout approaching", {
+  documentId: document.id,
+  engine: selectedEngine,
+  elapsedTime: Date.now() - startTime,
+  timeoutThreshold: PROCESSING_TIMEOUT
+});
+
+logger.warn("Gemini extraction truncated due to MAX_TOKENS", {
+  documentId: document.id,
+  gcsPdfPath: filePath,
+  finishReason: "MAX_TOKENS",
+  textLength: fullText.length,
+  safetyRatings: response.candidates[0].safetyRatings
+});
+
+// INCORRECT - Direct error object without structure
+logger.warn("Processing failed", error); // Error object not properly structured
+```
+
+#### Error Logging
+```typescript
+// CORRECT - Use logger.error with Error object and context
+logger.error("Document AI processing failed", error as Error, {
+  documentId: document.id,
+  operationName: "batchProcessDocument",
+  gcsInputPath: inputPath,
+  outputPrefix: outputPrefix,
+  attemptNumber: retryCount
+});
+
+logger.error("Database connection failed during OCR update", error as Error, {
+  operation: "updateProcessingStatus",
+  documentId: document.id,
+  processingStatus: ProcessingStatus.ERROR,
+  connectionPool: "ocr_repository"
+});
+
+// INCORRECT - Wrong parameter order or missing context
+logger.error("Processing failed", { documentId: document.id }, error); // Wrong parameter order
+logger.error("Error occurred", error as Error); // Missing business context
+```
+
+### 3. OCR and Document Processing Logging
+**REQUIRED**: Log all OCR operations with detailed context:
+
+```typescript
+// CORRECT - OCR operation logging
+logger.info("OCR engine selection", {
+  documentId: document.id,
+  engineChoice: engineToUse,
+  defaultEngine: ocrConfig.defaultOcrEngine,
+  fileType: file.mimetype,
+  userId: user.id
+});
+
+logger.info("Streaming OCR processing initiated", {
+  documentId: document.id,
+  filePath: actualJsonGcsPath,
+  shardIndex: 0,
+  operationName: docAiOperationId,
+  startTime: Date.now()
+});
+
+// Log embedding generation triggers
+logger.info("Embedding generation triggered", {
+  documentId: document.id,
+  ocrEngine: OcrEngineSource.GEMINI,
+  textLength: extractedText.length,
+  embeddingsTopic: pubsubConfig.embeddingRequestsTopic
+});
+```
+
+### 4. Authorization and Security Logging
+**REQUIRED**: Log all authorization decisions:
+
+```typescript
+// CORRECT - Authorization logging
+logger.info("Authorization check performed", {
+  operation: "reprocessDocument",
+  documentId: document.id,
+  requestingUserId: userId,
+  documentOwnerId: document.user_id,
+  authorized: true,
+  authMethod: "owner_check"
+});
+
+logger.warn("Authorization denied", {
+  operation: "deleteDocument",
+  documentId: document.id,
+  requestingUserId: userId,
+  documentOwnerId: document.user_id,
+  reason: "insufficient_permissions"
+});
+```
+
+## IV. Type Safety Requirements
+
+### 1. Error Constructor Parameters
+**REQUIRED**: Always provide proper types for error constructors:
+
+```typescript
+// CORRECT - Explicit types with cause chaining
+throw new AppError("Document processing failed", 500, { cause: originalError });
+throw new DatabaseError("OCR repository connection failed");
+throw new ValidationError("Document metadata validation failed", {
+  title: "Title is required",
+  content_type: "Must be one of: BILL, RESOLUTION"
+});
+
+// INCORRECT - Missing or wrong types
+throw new AppError("Error"); // Missing status code
+throw new Error("Document not found"); // Wrong error class
+```
+
+### 2. Logger Metadata Types
+**REQUIRED**: Use `Record<string, unknown>` for metadata:
+
+```typescript
+// CORRECT - Proper metadata typing
+const ocrMetadata: Record<string, unknown> = {
+  documentId: document.id,
+  operation: "processDocumentOcr",
+  engine: selectedEngine,
+  filePath: document.file_path,
+  userId: user.id,
+  startTime: Date.now()
+};
+logger.info("OCR processing initiated", ocrMetadata);
+
+// INCORRECT - Untyped metadata that may cause circular references
+logger.info("Processing started", { document, request, user }); // Objects may contain circular references
+```
+
+### 3. Error Handling in Catch Blocks
+**REQUIRED**: Properly type and handle unknown errors:
+
+```typescript
+// CORRECT - Proper error typing for OCR operations
+try {
+  await this.geminiService.extractTextFromPdf(gcsPdfPath);
+} catch (error: unknown) {
+  if (error instanceof AppError) {
+    throw error; // Re-throw known errors
+  }
+  
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  logger.error("Unexpected error in Gemini OCR processing", error as Error, {
+    operation: "extractTextFromPdf",
+    documentId: documentId,
+    gcsPdfPath: gcsPdfPath,
+    errorType: typeof error
+  });
+  
+  // Update OCR status to ERROR
+  await this.ocrRepository.updateProcessingStatus(documentId, {
+    processing_status: ProcessingStatus.ERROR,
+    processing_error: `GeminiOcrService: ${errorMessage}`
+  });
+  
+  throw new AppError(`OCR processing failed: ${errorMessage}`, 500, { cause: error });
+}
+
+// INCORRECT - Untyped error handling
+try {
+  await this.processDocument();
+} catch (error) { // Missing type annotation
+  console.log(error); // Direct console usage
+  throw error; // Re-throwing unknown error type
+}
+```
+
+## V. Required Imports by File Type
+
+### Service Files
+```typescript
+// Error handling
+import { executeDbOperation, throwIfNotFound } from "../utils/errorUtils.js";
+import { AppError, DatabaseError, NotFoundError, ValidationError } from "../middleware/errorHandler.js";
+
+// Logging
+import { Logger } from "../utils/logger.js";
+
+// OCR and processing types
+import { ProcessingStatus, OcrEngineSource } from "../models/ocr.model.js";
+
+// Create logger instance
+const logger = new Logger({ serviceName: "YourServiceName" });
+```
+
+### Controller Files
+```typescript
+// Error handling
+import { asyncHandler } from "../middleware/errorHandler.js";
+import { errorTypes } from "../utils/http-errors.js";
+
+// Logging
+import { Logger } from "../utils/logger.js";
+
+// Express types
+import { Request, Response } from "express";
+
+const logger = new Logger({ serviceName: "YourControllerName" });
+```
+
+### Repository Files
+```typescript
+// Error handling
+import { DatabaseError, NotFoundError } from "../middleware/errorHandler.js";
+import { executeDbOperation, throwIfNotFound, isPostgresError } from "../utils/errorUtils.js";
+
+// Logging
+import { Logger } from "../utils/logger.js";
+
+const logger = new Logger({ serviceName: "YourRepositoryName" });
+```
+
+## VI. Senate BE Specific Patterns
+
+### 1. Document Processing Operations
+```typescript
+// REQUIRED pattern for document processing
+async uploadAndProcessDocument(
+  file: Express.Multer.File,
+  dto: CreateDocumentDto,
+  userId: string
+): Promise<DocumentWithTextDto> {
+  const operationId = `upload_${Date.now()}`;
+  
+  return executeDbOperation(
+    async () => {
+      logger.info("Document upload initiated", {
+        operationId,
+        userId,
+        fileName: file.originalname,
+        fileSize: file.size,
+        contentType: dto.content_type
+      });
+
+      // Process document with proper error handling
+      const document = await this.withTransaction(async (client) => {
+        const filePath = await this.uploadFile(file);
+        const documentRecord = await this.repository.create({ ...dto, file_path: filePath }, userId, client);
+        
+        if (this.requiresOcrProcessing(documentRecord.content_type)) {
+          await this.initializeOcrProcessing(documentRecord.document_id, client);
+        }
+        
+        return documentRecord;
+      }, "uploadAndProcessDocument", operationId);
+
+      logger.info("Document upload completed", {
+        operationId,
+        documentId: document.document_id,
+        status: document.document_status
+      });
+
+      return this.mapToResponseDto(document);
+    },
+    "document",
+    "uploadAndProcessDocument"
+  );
+}
+```
+
+### 2. OCR Processing Operations
+```typescript
+// REQUIRED pattern for OCR operations
+async processDocumentWithGemini(
+  documentId: string,
+  gcsPdfPath: string,
+  mimeType: string,
+  userId: string
+): Promise<void> {
+  const operationId = `gemini_ocr_${documentId}_${Date.now()}`;
+  
+  logger.info("Gemini OCR processing started", {
+    operationId,
+    documentId,
+    gcsPdfPath,
+    mimeType,
+    userId
+  });
+
+  try {
+    // Update status to processing
+    await this.ocrRepository.createOrUpdateExtractedText(documentId, {
+      document_id: documentId,
+      processing_status: ProcessingStatus.PROCESSING,
+      ocr_engine_source: OcrEngineSource.GEMINI,
+      gcs_input_path: gcsPdfPath
+    });
+
+    // Extract text with Gemini
+    const result = await this.geminiService.extractTextFromPdf(gcsPdfPath);
+    
+    // Update with success
+    await this.ocrRepository.createOrUpdateExtractedText(documentId, {
+      document_id: documentId,
+      extracted_text: result.extractedText,
+      page_count: result.pageCount,
+      processing_status: ProcessingStatus.COMPLETED_OCR,
+      ocr_engine_source: OcrEngineSource.GEMINI,
+      ocr_details: { modelUsed: this.geminiService.modelName, extractionTimestamp: new Date().toISOString() }
+    });
+
+    logger.info("Gemini OCR processing completed", {
+      operationId,
+      documentId,
+      textLength: result.extractedText.length,
+      pageCount: result.pageCount
+    });
+
+    // Trigger embedding generation
+    await this.publishEmbeddingRequest(documentId);
+
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    
+    logger.error("Gemini OCR processing failed", error as Error, {
+      operationId,
+      documentId,
+      gcsPdfPath
+    });
+
+    await this.ocrRepository.createOrUpdateExtractedText(documentId, {
+      document_id: documentId,
+      processing_status: ProcessingStatus.ERROR,
+      processing_error: `GeminiOcrService: ${errorMessage}`,
+      ocr_engine_source: OcrEngineSource.GEMINI
+    });
+
+    throw new AppError(`OCR processing failed: ${errorMessage}`, 500, { cause: error });
+  }
+}
+```
+
+## VII. Forbidden Patterns
+
+### ❌ DO NOT USE:
+1. **Direct console usage**: `console.log()`, `console.error()`, `console.warn()`
+2. **Generic Error class**: `throw new Error("message")`
+3. **Unstructured logging**: String concatenation in log messages
+4. **Missing error wrappers**: Direct database calls without `executeDbOperation`
+5. **Untyped catch blocks**: `catch (error)` without `unknown` type
+6. **Manual HTTP error responses**: Direct `res.status().json()` in controllers
+7. **Swallowing errors**: Empty catch blocks or generic error responses
+8. **Missing operation IDs**: Not tracking operations across async processes
+9. **Inconsistent OCR status updates**: Not updating processing status on errors
+
+### ✅ ALWAYS USE:
+1. **Service-specific loggers**: `new Logger({ serviceName: "..." })`
+2. **Structured metadata**: Objects with proper typing and business context
+3. **Appropriate error classes**: Based on context (service vs controller vs repository)
+4. **Error operation wrappers**: `executeDbOperation`, `asyncHandler`
+5. **Operation tracking**: Unique operation IDs for complex async workflows
+6. **Status consistency**: Always update OCR/processing status on errors
+7. **Authorization logging**: Log all permission checks and denials
+8. **Type-safe error handling**: Proper typing in catch blocks with cause chaining
+
+By following these patterns, you ensure consistent, debuggable, and maintainable error handling and logging throughout the Senate BE application, especially for complex document processing and OCR workflows.

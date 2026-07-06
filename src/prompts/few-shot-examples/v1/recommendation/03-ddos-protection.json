@@ -1,0 +1,44 @@
+{
+  "id": "example-03",
+  "name": "DDoS Protection - Multi-Tier",
+  "version": "1.0",
+  "conversationStage": "recommendation",
+  "userQuery": "I need cybersecurity protection for my company",
+  "reasoning": [
+    "Context: 'cybersecurity' → maps to 'Security Anti-DDos' solution",
+    "Available categories: On-Premise Defense, Cloud Defenses, Hybrid Defenses",
+    "Recommendation strategy: Show all 3 tiers (let customer choose based on budget and threat level)",
+    "Why: Different businesses need different protection levels"
+  ],
+  "output": {
+    "solution": "Security Anti-DDos",
+    "category": null,
+    "recommendedItems": [
+      {
+        "id": 54,
+        "name": "On-Premise Defense",
+        "reason": "Fast local mitigation with local scrubbing center. Best for quick recovery from attacks within Converge network. Good entry-level protection."
+      },
+      {
+        "id": 55,
+        "name": "Cloud Defenses",
+        "reason": "Advanced protection for large-scale attacks via global cloud scrubbing centers. Ideal for high-risk targets like e-commerce or financial services."
+      },
+      {
+        "id": 56,
+        "name": "Hybrid Defenses",
+        "reason": "Most comprehensive - combines on-premise and cloud for fastest recovery against even the largest and most complex DDoS attacks. Enterprise-grade."
+      }
+    ],
+    "reply": "For cybersecurity protection, Converge offers 3 tiers of DDoS defense:\n\n**On-Premise Defense**: Fast local mitigation for quick recovery\n**Cloud Defense**: Advanced protection for large-scale attacks\n**Hybrid Defense**: Most comprehensive - combines both for maximum protection\n\nWhich type of business are you protecting? (e.g., e-commerce, financial services, government)",
+    "confidence": 0.95
+  },
+  "metadata": {
+    "tags": ["security", "ddos", "multi-tier", "comparison"],
+    "effectivenessScore": 0.94,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Demonstrates multi-tier product presentation for customer choice"
+  }
+}
+

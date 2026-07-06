@@ -1,0 +1,46 @@
+{
+  "id": "example-09",
+  "name": "Discovery - Remote Distributed Team",
+  "version": "1.0",
+  "conversationStage": "discovery",
+  "userQuery": "we have a remote team across 5 cities and need reliable connectivity",
+  "reasoning": [
+    "Context: Discovery stage - distributed team across multiple locations",
+    "Key signals: 'remote team' + '5 cities' + 'reliable connectivity' → need multi-site solution",
+    "Solution mapping: Multiple locations = Transport (SD-WAN) + Internet + Security",
+    "Target audience: Likely SME or Digital Innovators (remote-first business model)",
+    "Bundle opportunity: SD-WAN (connects sites) + Fiber (local connectivity) + Security (protect distributed endpoints)",
+    "Scale: 5 cities = small-medium distributed deployment → Basic/Standard tiers"
+  ],
+  "output": {
+    "solution": "Transport",
+    "category": "SD-WAN",
+    "recommendedItems": [
+      {
+        "id": 64,
+        "name": "SD-WAN Basic",
+        "reason": "Perfect for connecting your 5 city locations into one secure network. Optimizes traffic between sites and ensures reliable connectivity for remote teams. Includes centralized management and monitoring."
+      },
+      {
+        "id": 35,
+        "name": "Fiber Broadband PEAK 200-400 mbps",
+        "reason": "Reliable local internet for each city location. 200-400 Mbps handles video calls, cloud apps, and file sharing for distributed teams. Can be deployed at each site."
+      },
+      {
+        "id": 54,
+        "name": "On-Premise Defense",
+        "reason": "Essential security for distributed teams. Protects all 5 locations from DDoS attacks and cyber threats. Particularly important when employees work remotely across multiple sites."
+      }
+    ],
+    "reply": "For your remote team across 5 cities, I recommend a comprehensive distributed connectivity solution:\n\n**SD-WAN Basic**: Connects all 5 locations into one secure network with optimized traffic routing and centralized management\n**Fiber Broadband PEAK 200-400 mbps**: Reliable local connectivity at each site for video calls and cloud applications\n**On-Premise Defense**: Security protection across all locations to keep your distributed team safe\n\nThese work together to create a unified, secure network for your remote workforce. To refine these recommendations, what industry are you in and roughly how many team members at each location?",
+    "confidence": 0.88
+  },
+  "metadata": {
+    "tags": ["remote", "distributed", "multi-city", "sd-wan", "modern-work", "discovery"],
+    "effectivenessScore": 0.92,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Addresses modern remote work scenarios. Shows bundling Transport + Internet + Security for distributed teams. Demonstrates handling multi-location requirements in discovery stage."
+  }
+}
+

@@ -1,0 +1,45 @@
+{
+  "id": "example-06",
+  "name": "Multi-Product Bundle - Retail Stores",
+  "version": "1.0",
+  "conversationStage": "discovery",
+  "userQuery": "I have 3 retail stores that need connectivity, security cameras, and protection from attacks",
+  "reasoning": [
+    "Context: Multi-branch retail business → needs integrated solution",
+    "Requirements breakdown: (1) 3 stores = Multi-site = SD-WAN, (2) security cameras = Managed Surveillance, (3) protection = Security Anti-DDoS",
+    "Target audience: Government & Retails (retail business)",
+    "Solution strategy: Bundle 3 solutions working together - SD-WAN connects branches, Security protects all locations, Surveillance manages cameras centrally",
+    "Scale: Small Branches (3 locations) → Basic/entry-level packages"
+  ],
+  "output": {
+    "solution": "Managed Services",
+    "category": "SD-WAN",
+    "recommendedItems": [
+      {
+        "id": 64,
+        "name": "SD-WAN Basic",
+        "reason": "Connects your 3 retail stores with centralized management. Optimizes bandwidth across locations and provides secure connectivity between sites. Perfect for 3-branch retail operations."
+      },
+      {
+        "id": 68,
+        "name": "Smart Cameras",
+        "reason": "Managed surveillance solution that works seamlessly with SD-WAN. Monitor all 3 stores from one dashboard. Includes AI-powered analytics for theft prevention and customer insights."
+      },
+      {
+        "id": 54,
+        "name": "On-Premise Defense",
+        "reason": "Protects all 3 locations from DDoS attacks and cyber threats. Fast local mitigation ensures your POS systems and inventory management stay online during attacks."
+      }
+    ],
+    "reply": "For your 3 retail stores, I recommend an integrated solution:\n\n**SD-WAN Basic**: Connects all 3 locations with centralized management and secure inter-store connectivity\n**Smart Cameras**: Centralized surveillance across all stores with AI analytics\n**On-Premise Defense**: DDoS protection keeping your POS and inventory systems safe\n\nThese three work together to create a unified, secure network for your retail business. Would you like pricing details or information about installation timelines?",
+    "confidence": 0.95
+  },
+  "metadata": {
+    "tags": ["retail", "multi-branch", "bundle", "sd-wan", "surveillance", "security"],
+    "effectivenessScore": 0.90,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Demonstrates multi-product bundling for complex requirements"
+  }
+}
+

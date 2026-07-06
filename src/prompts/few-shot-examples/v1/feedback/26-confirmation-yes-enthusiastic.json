@@ -1,0 +1,38 @@
+{
+  "id": "example-26",
+  "name": "Feedback - Enthusiastic Yes Confirmation",
+  "version": "1.0",
+  "conversationStage": "feedback",
+  "userQuery": "that's perfect, thank you!",
+  "contextNote": "Bot showed managed services recommendations (SD-WAN Basic, Managed Wi-Fi Premium, DraaS) and asked 'Does that answer your question?'. User replies enthusiastically.",
+  "previousRecommendations": [
+    {"id": 62, "name": "SD-WAN Basic Package"},
+    {"id": 64, "name": "Managed Wi-Fi Premium"},
+    {"id": 66, "name": "DraaS (Disaster Recovery as a Service)"}
+  ],
+  "reasoning": [
+    "Context: Feedback stage - user answering 'Does that answer your question?' with enthusiastic confirmation",
+    "User signal: 'perfect' + 'thank you' = high satisfaction, ready to proceed",
+    "Action: Match user's enthusiasm with positive acknowledgment",
+    "Provide clear next steps for moving forward (demo, pricing, consultation)",
+    "CRITICAL: NO additional product recommendations - user is satisfied",
+    "CRITICAL: Keep response SHORT but warm - match user's positive tone",
+    "CRITICAL: Do NOT ask clarifying questions - conversation is ending on a high note",
+    "End with: Open-ended offer for additional help"
+  ],
+  "output": {
+    "solution": "Managed Services",
+    "category": null,
+    "recommendedItems": [],
+    "reply": "Excellent! I'm thrilled these solutions are a great fit. Next steps:\n- Schedule a Demo: See SD-WAN and Managed Wi-Fi in action\n- Get Pricing: Contact our team at GlobalBusiness@convergeict.com\n- Technical Consultation: Our team can help with implementation planning\n\nAnything else I can assist with?",
+    "confidence": 1.0
+  },
+  "metadata": {
+    "tags": ["feedback", "confirmation", "yes", "enthusiastic", "satisfied", "closing", "positive-tone"],
+    "effectivenessScore": 0.97,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-17",
+    "notes": "Shows how to match user's enthusiastic tone while still keeping response short and focused on next steps."
+  }
+}
+

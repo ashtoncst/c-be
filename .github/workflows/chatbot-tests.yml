@@ -1,0 +1,71 @@
+name: chatbot-tests
+
+on:
+  # Run on PRs to dev branch
+  pull_request:
+    branches:
+      - dev
+      - staging
+  # Run on pushes to dev branch (after merge)
+  push:
+    branches:
+      - dev
+      - staging
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * *" # nightly
+
+jobs:
+  pr:
+    if: github.event_name == 'pull_request' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    env:
+      TEST_PER_ITEM_LIMIT: 1
+      TEST_VARIANTS_PER_ITEM: 2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci
+      - run: npm run prep
+      - name: Core suites
+        run: |
+          npm test -- test/chatbot/hierarchy
+          npm test -- test/chatbot/anchoring
+          npm test -- test/chatbot/anomalies
+          npm test -- test/chatbot/fts_ilike
+          npm test -- test/chatbot/multiturn
+      - name: Curated per-item (sharded small)
+        run: |
+          npm test -- test/chatbot/per-item/curated.spec.ts
+
+  nightly:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+    env:
+      TEST_PER_ITEM_LIMIT: 9999
+      TEST_VARIANTS_PER_ITEM: 12
+      SHARD_INDEX: ${{ matrix.shard }}
+      SHARD_TOTAL: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci
+      - run: npm run prep
+      - name: Core suites
+        run: |
+          npm test -- test/chatbot/hierarchy
+          npm test -- test/chatbot/anchoring
+          npm test -- test/chatbot/anomalies
+          npm test -- test/chatbot/fts_ilike
+          npm test -- test/chatbot/multiturn
+      - name: Curated per-item (full)
+        run: |
+          npm test -- test/chatbot/per-item/curated.spec.ts

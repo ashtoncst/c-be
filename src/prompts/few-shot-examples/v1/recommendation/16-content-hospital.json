@@ -1,0 +1,48 @@
+{
+  "id": "example-16",
+  "name": "Recommendation - Content/IPTV for Hospital",
+  "version": "1.0",
+  "conversationStage": "recommendation",
+  "userQuery": "we need entertainment system for patient rooms in our 200-bed hospital",
+  "contextNote": "User has provided: hospital + patient rooms + entertainment. Content/IPTV solution with healthcare focus.",
+  "reasoning": [
+    "Context: Recommendation stage - healthcare facility with entertainment needs",
+    "Key signals: 'hospital' + '200-bed' + 'patient rooms' + 'entertainment' → Content solution",
+    "Solution mapping: Content → IPTV with hospital-specific features",
+    "Industry: Healthcare → patient experience + hospital information integration",
+    "Deployment options: STB (best for hospitals - easy to sanitize) vs Smart TV vs App only",
+    "Hospital priorities: Reliability + easy maintenance + patient information",
+    "Add-ons: Consider CNN (news), Warner (entertainment), Hospital info integration"
+  ],
+  "output": {
+    "solution": "Content",
+    "category": null,
+    "recommendedItems": [
+      {
+        "id": 52,
+        "name": "STB with App",
+        "reason": "Most reliable option for hospitals. Physical set-top box (₱300/month/unit) ensures consistent service across all 200 patient rooms. Easy for staff to troubleshoot and maintain. Sanitizable hardware that works with any TV. Includes basic live TV content."
+      },
+      {
+        "id": 53,
+        "name": "Smart TV with App",
+        "reason": "Premium option if you're upgrading TVs. ₱250/month/unit plus TV cost. Cleaner look without external boxes. Better for private rooms or VIP wards. Built-in apps provide modern streaming experience."
+      },
+      {
+        "id": 58,
+        "name": "Add Ons: CNN",
+        "reason": "Essential for hospitals - patients want news access during recovery. Keeps patients informed and engaged during extended stays."
+      }
+    ],
+    "reply": "Great! For your 200-bed hospital, I recommend our **IPTV Content solutions** designed for healthcare:\n\n**STB with App** (₱300/month/unit): Most popular for hospitals. Physical set-top box provides reliable entertainment across all patient rooms. Easy for nursing staff to manage and sanitizable between patients. Works with your existing TVs.\n\n**Smart TV with App** (₱250/month/unit + TV): Premium option if you're upgrading to new smart TVs. Cleaner installation without external boxes. Great for private rooms or VIP wards.\n\n**Add-On: CNN**: Highly recommended for hospitals - patients appreciate news access during recovery periods.\n\n**Healthcare-Specific Features**:\n- Hospital information integration (services, visiting hours, menus)\n- Easy content management across all rooms\n- Reliable 24/7 operation for patient comfort\n\nFor 200 beds with STB + CNN: approximately ₱60,000-70,000/month. **Question**: Are you planning to integrate hospital information displays (menus, services) or just entertainment?\n\nDoes that answer your question?",
+    "confidence": 0.91
+  },
+  "metadata": {
+    "tags": ["content", "iptv", "hospital", "healthcare", "patient-experience", "recommendation"],
+    "effectivenessScore": 0.92,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Demonstrates Content/IPTV product line with healthcare context. Shows pricing transparency. Highlights hospital-specific features and considerations."
+  }
+}
+

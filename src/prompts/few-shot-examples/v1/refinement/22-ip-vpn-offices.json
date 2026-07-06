@@ -1,0 +1,32 @@
+{
+  "id": "example-22",
+  "name": "Refinement - IP VPN for Secure Multi-Office Connectivity",
+  "version": "1.0",
+  "conversationStage": "refinement",
+  "userQuery": "we have 4 offices and need very secure connections between them",
+  "contextNote": "Previous turn: Bot asked 'How many locations do you need to connect, and what's your priority - speed, security, or cost?'. User is now providing specific details about office count and security priority.",
+  "reasoning": [
+    "Context: Refinement stage - user is adding details to initial connectivity query",
+    "Previous query was likely: 'we need to connect our offices' (vague)",
+    "User signal: '4 offices' + 'very secure connections' → IP VPN or FASTER (not SD-WAN)",
+    "Key insight: 'very secure' suggests they need private network, not internet-based VPN",
+    "Solution mapping: Transport → IP VPN (MPLS-based private network) or FASTER (Layer 3 VPN over fiber)",
+    "Refinement needed: Industry, data sensitivity, compliance, bandwidth needs",
+    "Goal: Determine if they need IP VPN (MPLS) or FASTER (fiber VPN)"
+  ],
+  "output": {
+    "solution": "Transport",
+    "category": "IP VPN",
+    "recommendedItems": [],
+    "reply": "Excellent! For **4 offices needing secure connectivity**, we have specialized private network solutions:\n\n**IP VPN**: Dedicated private network using MPLS technology that securely links your offices. Traffic never touches the public internet - it's completely isolated and encrypted. Ideal for industries with strict security/compliance requirements.\n\n**FASTER**: Layer 3 VPN over our pure fiber network connecting your offices, branches, and remote sites. Secure fiber-based connectivity with excellent performance.\n\nBoth provide the high security you need. To recommend the best fit:\n\n**Critical Questions**:\n1. **Industry**: What industry are you in? (Banking, healthcare, government have specific security requirements)\n2. **Data Sensitivity**: Are you transmitting sensitive data (financial records, patient info, classified data)?\n3. **Compliance**: Do you need to meet specific regulations (BSP, DOH, data privacy)?\n4. **Bandwidth**: What's your typical data transfer between offices? (Small files, large databases, video?)\n5. **Office Locations**: Are all 4 offices in Metro Manila, or spread across different regions?\n\nThis helps me determine whether you need enterprise-grade MPLS (IP VPN) or our fiber-based VPN (FASTER).",
+    "confidence": 0.85
+  },
+  "metadata": {
+    "tags": ["refinement", "ip-vpn", "faster", "transport", "multi-office", "security", "mpls"],
+    "effectivenessScore": 0.89,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Demonstrates refinement for secure multi-office connectivity. Differentiates IP VPN vs FASTER. Covers under-represented Transport categories (IP VPN, FASTER)."
+  }
+}
+

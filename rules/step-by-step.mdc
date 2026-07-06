@@ -1,0 +1,28 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Instructs AI to create step-by-step plans in a markdown file when the user says "create a step by step plan".
+alwaysApply: true
+---
+
+# Step-by-Step Plans in Markdown Files
+
+When the user includes the phrase "create a step by step plan" in their query, the AI assistant should generate the requested plan directly within a markdown file.
+
+## Guidelines:
+
+1.  **Trigger Phrase:** The primary trigger for this rule is the exact phrase "create a step by step plan" from the user.
+2.  **Output Format:** The entire step-by-step plan should be formatted as a markdown file.
+3.  **Content:** The content of the markdown file should be the detailed, step-by-step plan requested by the user.
+4.  **File Naming (if applicable):** If the AI is creating a *new* markdown file, it should use a descriptive name for the file if one is not provided by the user or easily inferred. If modifying an existing file, that context should be used.
+
+## Example Interaction:
+
+**User Query:**
+"Can you create a step by step plan to refactor the authentication module?"
+
+**AI Action:**
+The AI will generate a response that includes the creation or modification of a markdown file (e.g., `refactor-authentication-plan.md` or update an existing relevant document) containing the detailed step-by-step plan for refactoring the authentication module.

@@ -1,0 +1,84 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-4a7b-8c9d-1234567890ab",
+		"name": "Converge Chat Service (Socket.IO)",
+		"description": "## ⚠️ IMPORTANT: Use a Socket.IO Client\n\nThis collection tests a **Socket.IO** service. Standard WebSocket clients will fail.\n\n**In Postman, you must create a new request and select `Socket.IO` from the request type dropdown for each test case.**",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Scenario 1: Residential User (Discovery)",
+			"item": [
+				{
+					"name": "User asks a vague question about home wifi",
+					"request": {
+						"url": "{{ws_url}}",
+						"description": "### ⚠️ Setup: Use a Socket.IO Request\n1. In Postman, create a **New Socket.IO Request**.\n2. Set the URL to `{{ws_url}}` and click **Connect**.\n3. Go to the **Events** tab and add listeners for `token`, `recommendations`, `end`, and `error`.\n\n### ➡️ Action: Send a Message\n1. Go to the **Messages** tab.\n2. Set the **Event name** to `chat_message`.\n3. Paste the following JSON into the message body and click **Send**:\n```json\n{\n  \"session_id\": \"ws-test-residential-1\",\n  \"message\": \"I need wifi for my house\"\n}\n```\n\n### ✅ Expected Response (in the message log):\n- A stream of `token` events forming a conversational question.\n- A `recommendations` event with an array of products.\n- A final `end` event."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Scenario 2: Business User (Intent-Driven)",
+			"item": [
+				{
+					"name": "User asks to compare business plans",
+					"request": {
+						"url": "{{ws_url}}",
+						"description": "### ⚠️ Setup: Use a Socket.IO Request\n1. In Postman, create a **New Socket.IO Request**.\n2. Set the URL to `{{ws_url}}` and click **Connect**.\n3. Go to the **Events** tab and add listeners for `token`, `recommendations`, `end`, and `error`.\n\n### ➡️ Action: Send a Message\n1. Go to the **Messages** tab.\n2. Set the **Event name** to `chat_message`.\n3. Paste the following JSON into the message body and click **Send**:\n```json\n{\n  \"session_id\": \"ws-test-business-1\",\n  \"message\": \"I need internet for my business, what are the differences between your plans?\"\n}\n```\n\n### ✅ Expected Response (in the message log):\n- The `token` stream should directly address the comparison, not ask discovery questions.\n- The `recommendations` event should contain business-focused products.\n- A final `end` event."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Scenario 3: Multi-Turn Conversation (Memory)",
+			"item": [
+				{
+					"name": "Step 3.1: Start with a specific request",
+					"request": {
+						"url": "{{ws_url}}",
+						"description": "### ⚠️ Setup: Use a Socket.IO Request\n1. In Postman, create a **New Socket.IO Request**.\n2. Set the URL to `{{ws_url}}` and click **Connect**.\n3. Go to the **Events** tab and add listeners for `token`, `recommendations`, `end`, and `error`.\n\n### ➡️ Action: Send a Message\n1. Go to the **Messages** tab.\n2. Set the **Event name** to `chat_message`.\n3. Paste the following JSON into the message body and click **Send**:\n```json\n{\n  \"session_id\": \"ws-test-multiturn-1\",\n  \"message\": \"Show me your fastest fiber internet options for my home.\"\n}\n```\n\n### ✅ Next Step\n- Observe the response, but **do not disconnect**. Proceed to Step 3.2."
+					},
+					"response": []
+				},
+				{
+					"name": "Step 3.2: Ask a follow-up question",
+					"request": {
+						"url": "{{ws_url}}",
+						"description": "### ⚠️ Prerequisite: Complete Step 3.1\nUse the **same active connection** from the previous step.\n\n### ➡️ Action: Send a Follow-up Message\n1. Go to the **Messages** tab.\n2. Set the **Event name** to `chat_message`.\n3. Paste the following JSON into the message body and click **Send**:\n```json\n{\n  \"session_id\": \"ws-test-multiturn-1\",\n  \"message\": \"Okay, between those two, which one is better for a family that streams a lot of 4K video?\"\n}\n```\n\n### ✅ Expected Response (in the message log):\n- The agent's response should demonstrate memory and directly answer the question about 4K streaming without asking for clarification."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Scenario 4: Validation and Error Handling",
+			"item": [
+				{
+					"name": "User sends an invalid message (missing session_id)",
+					"request": {
+						"url": "{{ws_url}}",
+						"description": "### ⚠️ Setup: Use a Socket.IO Request\n1. In Postman, create a **New Socket.IO Request**.\n2. Set the URL to `{{ws_url}}` and click **Connect**.\n3. Go to the **Events** tab and add a listener for `error`.\n\n### ➡️ Action: Send an Invalid Message\n1. Go to the **Messages** tab.\n2. Set the **Event name** to `chat_message`.\n3. Paste the following JSON into the message body and click **Send**:\n```json\n{\n  \"message\": \"This message is missing a session_id\"\n}\n```\n\n### ✅ Expected Response (in the message log):\n- A single `error` event with a payload indicating a validation error."
+					},
+					"response": []
+				},
+				{
+					"name": "User sends an empty message",
+					"request": {
+						"url": "{{ws_url}}",
+						"description": "### ⚠️ Setup: Use a Socket.IO Request\n1. In Postman, create a **New Socket.IO Request**.\n2. Set the URL to `{{ws_url}}` and click **Connect**.\n3. Go to the **Events** tab and add a listener for `error`.\n\n### ➡️ Action: Send an Empty Message\n1. Go to the **Messages** tab.\n2. Set the **Event name** to `chat_message`.\n3. Paste the following JSON into the message body and click **Send**:\n```json\n{\n  \"session_id\": \"ws-test-error-1\",\n  \"message\": \"\"\n}\n```\n\n### ✅ Expected Response (in the message log):\n- A single `error` event with a payload indicating a validation error because the message is empty."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "ws_url",
+			"value": "ws://localhost:3000"
+		}
+	]
+}

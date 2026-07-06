@@ -1,0 +1,48 @@
+{
+  "id": "example-19",
+  "name": "Recommendation - Cloud Direct Connect for Tech Company",
+  "version": "1.0",
+  "conversationStage": "recommendation",
+  "userQuery": "our applications are on AWS and we need faster more reliable connection than regular internet",
+  "contextNote": "User has provided: AWS cloud + need for dedicated connectivity. Clear Cloud Direct Connect use case.",
+  "reasoning": [
+    "Context: Recommendation stage - cloud connectivity with performance requirements",
+    "Key signals: 'AWS' + 'faster more reliable' + 'than regular internet' → Cloud Direct Connect",
+    "Solution mapping: Transport → Cloud Direct Connect",
+    "Use case: Direct private link to AWS (bypassing public internet)",
+    "Benefits: Lower latency, consistent performance, reduced data transfer costs, enhanced security",
+    "Target audience: Digital Innovators, tech companies with cloud-first infrastructure",
+    "Bundle: Pair with high-speed Fiber Broadband for general internet needs"
+  ],
+  "output": {
+    "solution": "Transport",
+    "category": "Cloud Direct Connect",
+    "recommendedItems": [
+      {
+        "id": 16,
+        "name": "Cloud Direct Connect",
+        "reason": "Exactly what you need for AWS connectivity. Private high-throughput link between your network and AWS, bypassing the public internet. Provides consistent low-latency performance, enhanced security, and reduced data transfer costs. Enables WAN-like integration with your cloud infrastructure for reliable access to your applications."
+      },
+      {
+        "id": 40,
+        "name": "Fiber Broadband PEAK with IP 500 mbps",
+        "reason": "High-speed internet with static IP for your office connectivity. 500 Mbps handles general internet needs while Cloud Direct Connect handles AWS traffic. Static IP enables secure remote access to your infrastructure and external services."
+      },
+      {
+        "id": 54,
+        "name": "On-Premise Defense",
+        "reason": "Security layer protecting your infrastructure from DDoS attacks. Important when running cloud applications that may be exposed to internet threats. Quick local mitigation with 40 Gbps capacity."
+      }
+    ],
+    "reply": "Perfect! For faster, more reliable AWS connectivity, I recommend:\n\n**Cloud Direct Connect**: Private dedicated link between your network and AWS cloud. **Key benefits**:\n- Bypasses public internet for consistent performance\n- Lower latency and higher throughput to AWS services\n- Enhanced security (traffic doesn't traverse public internet)\n- Reduced AWS data transfer costs\n- WAN-like integration with your cloud infrastructure\n\n**Fiber Broadband PEAK with IP 500 mbps**: High-speed internet with static IP for your office. Handles general internet traffic while Cloud Direct Connect dedicates bandwidth to AWS. Static IP enables secure remote access and external integrations.\n\n**On-Premise Defense**: Security protection for your infrastructure against DDoS attacks, especially important for cloud-facing applications.\n\n**Perfect for**: Tech companies with cloud-first architecture, SaaS platforms, applications requiring consistent low-latency AWS access.\n\n**Questions**:\n1. What's your monthly data transfer volume to/from AWS?\n2. Which AWS region are you primarily using?\n3. Do you also use Azure or GCP? (We support multi-cloud connectivity)\n\nDoes that answer your question?",
+    "confidence": 0.92
+  },
+  "metadata": {
+    "tags": ["cloud-direct-connect", "aws", "cloud-connectivity", "transport", "tech-company", "recommendation"],
+    "effectivenessScore": 0.93,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Demonstrates Cloud Direct Connect for tech companies. Explains benefits clearly (latency, security, cost). Shows intelligent bundling with internet and security."
+  }
+}
+

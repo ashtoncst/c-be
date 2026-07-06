@@ -1,0 +1,551 @@
+{
+  "info": {
+    "_postman_id": "product-api-collection",
+    "name": "Converge Product API",
+    "description": "Complete API tests for the Product service including target audiences, categories, and product listing with filtering",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Product Metadata",
+      "item": [
+        {
+          "name": "Get Target Audiences",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/target-audiences",
+              "host": ["{{base_url}}"],
+              "path": ["products", "target-audiences"]
+            },
+            "description": "Retrieve all available target audiences (Residential, SME, Enterprise)"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Array contains target audience objects\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    if (responseJson.length > 0) {",
+                  "        pm.expect(responseJson[0]).to.have.property('id');",
+                  "        pm.expect(responseJson[0]).to.have.property('name');",
+                  "        pm.expect(responseJson[0]).to.have.property('description');",
+                  "    }",
+                  "});",
+                  "",
+                  "// Store first target audience ID for filtering tests",
+                  "if (pm.response.code === 200 && pm.response.json().length > 0) {",
+                  "    pm.environment.set('target_audience_id', pm.response.json()[0].id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Product Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/categories",
+              "host": ["{{base_url}}"],
+              "path": ["products", "categories"]
+            },
+            "description": "Retrieve all available product categories"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Array contains category objects\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    if (responseJson.length > 0) {",
+                  "        pm.expect(responseJson[0]).to.have.property('id');",
+                  "        pm.expect(responseJson[0]).to.have.property('name');",
+                  "        pm.expect(responseJson[0]).to.have.property('description');",
+                  "    }",
+                  "});",
+                  "",
+                  "// Store first category ID for filtering tests",
+                  "if (pm.response.code === 200 && pm.response.json().length > 0) {",
+                  "    pm.environment.set('product_category_id', pm.response.json()[0].id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Product Listing",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": ["{{base_url}}"],
+              "path": ["products"]
+            },
+            "description": "Retrieve a list of all products without filtering"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct structure\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('success');",
+                  "    pm.expect(responseJson).to.have.property('data');",
+                  "    pm.expect(responseJson.data).to.have.property('products');",
+                  "    pm.expect(responseJson.data).to.have.property('total');",
+                  "    pm.expect(responseJson.data).to.have.property('limit');",
+                  "    pm.expect(responseJson.data).to.have.property('offset');",
+                  "});",
+                  "",
+                  "pm.test(\"Products is an array\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.data.products).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Product objects have required properties\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    if (responseJson.data.products.length > 0) {",
+                  "        const product = responseJson.data.products[0];",
+                  "        pm.expect(product).to.have.property('id');",
+                  "        pm.expect(product).to.have.property('name');",
+                  "        pm.expect(product).to.have.property('description');",
+                  "        pm.expect(product).to.have.property('price');",
+                  "    }",
+                  "});",
+                  "",
+                  "// Store first product ID for individual product test",
+                  "if (pm.response.code === 200 && pm.response.json().data.products.length > 0) {",
+                  "    pm.environment.set('product_id', pm.response.json().data.products[0].id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Products with Target Audience Filter",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?target_audience_id={{target_audience_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products"],
+              "query": [
+                {
+                  "key": "target_audience_id",
+                  "value": "{{target_audience_id}}"
+                }
+              ]
+            },
+            "description": "Retrieve products filtered by target audience"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct structure\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('success');",
+                  "    pm.expect(responseJson).to.have.property('data');",
+                  "    pm.expect(responseJson.data).to.have.property('products');",
+                  "});",
+                  "",
+                  "pm.test(\"All products match target audience filter\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    const targetAudienceId = pm.environment.get('target_audience_id');",
+                  "    if (responseJson.data.products.length > 0) {",
+                  "        responseJson.data.products.forEach(product => {",
+                  "            pm.expect(product.targetAudienceId).to.eql(parseInt(targetAudienceId));",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Products with Category Filter",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?product_category_id={{product_category_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products"],
+              "query": [
+                {
+                  "key": "product_category_id",
+                  "value": "{{product_category_id}}"
+                }
+              ]
+            },
+            "description": "Retrieve products filtered by category"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct structure\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('success');",
+                  "    pm.expect(responseJson).to.have.property('data');",
+                  "    pm.expect(responseJson.data).to.have.property('products');",
+                  "});",
+                  "",
+                  "pm.test(\"All products match category filter\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    const categoryId = pm.environment.get('product_category_id');",
+                  "    if (responseJson.data.products.length > 0) {",
+                  "        responseJson.data.products.forEach(product => {",
+                  "            pm.expect(product.productCategoryId).to.eql(parseInt(categoryId));",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Products with Pagination",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?limit=5&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["products"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            },
+            "description": "Retrieve products with pagination parameters"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response respects pagination limits\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.data.products.length).to.be.at.most(5);",
+                  "    pm.expect(responseJson.data.limit).to.eql(5);",
+                  "    pm.expect(responseJson.data.offset).to.eql(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Total count is accurate\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.data.total).to.be.a('number');",
+                  "    pm.expect(responseJson.data.total).to.be.at.least(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Products with Multiple Filters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?target_audience_id={{target_audience_id}}&product_category_id={{product_category_id}}&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["products"],
+              "query": [
+                {
+                  "key": "target_audience_id",
+                  "value": "{{target_audience_id}}"
+                },
+                {
+                  "key": "product_category_id",
+                  "value": "{{product_category_id}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Retrieve products with multiple filters applied"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct structure\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('success');",
+                  "    pm.expect(responseJson).to.have.property('data');",
+                  "    pm.expect(responseJson.data).to.have.property('products');",
+                  "});",
+                  "",
+                  "pm.test(\"Products match both filters\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    const targetAudienceId = pm.environment.get('target_audience_id');",
+                  "    const categoryId = pm.environment.get('product_category_id');",
+                  "    if (responseJson.data.products.length > 0) {",
+                  "        responseJson.data.products.forEach(product => {",
+                  "            pm.expect(product.targetAudienceId).to.eql(parseInt(targetAudienceId));",
+                  "            pm.expect(product.productCategoryId).to.eql(parseInt(categoryId));",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Products with Invalid Filter",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?target_audience_id=999",
+              "host": ["{{base_url}}"],
+              "path": ["products"],
+              "query": [
+                {
+                  "key": "target_audience_id",
+                  "value": "999"
+                }
+              ]
+            },
+            "description": "Test handling of invalid filter parameters"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 400\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 400]);",
+                  "});",
+                  "",
+                  "pm.test(\"Response structure is valid\", function () {",
+                  "    if (pm.response.code === 200) {",
+                  "        const responseJson = pm.response.json();",
+                  "        pm.expect(responseJson).to.have.property('success');",
+                  "        pm.expect(responseJson).to.have.property('data');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Individual Product",
+      "item": [
+        {
+          "name": "Get Product by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "{{product_id}}"]
+            },
+            "description": "Retrieve detailed information for a specific product"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct structure\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('success');",
+                  "    pm.expect(responseJson).to.have.property('data');",
+                  "});",
+                  "",
+                  "pm.test(\"Product has all required properties\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    const product = responseJson.data;",
+                  "    pm.expect(product).to.have.property('id');",
+                  "    pm.expect(product).to.have.property('name');",
+                  "    pm.expect(product).to.have.property('description');",
+                  "    pm.expect(product).to.have.property('price');",
+                  "    pm.expect(product).to.have.property('targetAudienceId');",
+                  "    pm.expect(product).to.have.property('productCategoryId');",
+                  "    pm.expect(product.id).to.eql(parseInt(pm.environment.get('product_id')));",
+                  "});",
+                  "",
+                  "pm.test(\"Product has detailed information\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    const product = responseJson.data;",
+                  "    // Check for optional detailed properties",
+                  "    pm.expect(product).to.have.property('features');",
+                  "    pm.expect(product.features).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Product by Invalid ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/99999",
+              "host": ["{{base_url}}"],
+              "path": ["products", "99999"]
+            },
+            "description": "Test error handling for non-existent product ID"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates product not found\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('message');",
+                  "    pm.expect(responseJson.message).to.include('not found');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Product with Invalid ID Format",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/invalid-id",
+              "host": ["{{base_url}}"],
+              "path": ["products", "invalid-id"]
+            },
+            "description": "Test error handling for invalid ID format"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response indicates invalid ID format\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('message');",
+                  "    pm.expect(responseJson.message).to.include('invalid');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    }
+  ]
+}

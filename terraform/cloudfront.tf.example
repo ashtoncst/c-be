@@ -1,0 +1,108 @@
+# CloudFront Distribution for HTTPS without Custom Domain
+
+# This is OPTIONAL - only use if you don't have a domain
+
+# Rename to cloudfront.tf to enable
+
+# CloudFront Origin Access Identity
+
+resource "aws_cloudfront_origin_access_identity" "main" {
+count = var.use_cloudfront ? 1 : 0
+comment = "OAI for ${var.project_name}-${var.environment}"
+}
+
+# CloudFront Distribution
+
+resource "aws_cloudfront_distribution" "main" {
+count = var.use_cloudfront ? 1 : 0
+enabled = true
+comment = "${var.project_name}-${var.environment} CDN"
+
+# Point to ALB
+
+origin {
+domain_name = aws_lb.main.dns_name
+origin_id = "ALB"
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "http-only" # ALB doesn't have SSL yet
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+
+    # Support WebSockets
+    custom_header {
+      name  = "X-Forwarded-Proto"
+      value = "https"
+    }
+
+}
+
+# Default cache behavior
+
+default_cache_behavior {
+allowed_methods = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+cached_methods = ["GET", "HEAD", "OPTIONS"]
+target_origin_id = "ALB"
+viewer_protocol_policy = "redirect-to-https"
+
+    # Forward everything to ALB (no caching for API)
+    forwarded_values {
+      query_string = true
+      headers      = ["*"]
+
+      cookies {
+        forward = "all"
+      }
+    }
+
+    min_ttl     = 0
+    default_ttl = 0
+    max_ttl     = 0
+
+    # Enable compression
+    compress = true
+
+}
+
+# Price class
+
+price_class = "PriceClass_100" # North America & Europe only (cheapest)
+
+# SSL Certificate (CloudFront provides free wildcard cert)
+
+viewer_certificate {
+cloudfront_default_certificate = true
+minimum_protocol_version = "TLSv1.2_2021"
+}
+
+# Restrictions
+
+restrictions {
+geo_restriction {
+restriction_type = "none"
+}
+}
+
+# WebSocket support
+
+http_version = "http2and3"
+
+tags = {
+Name = "${var.project_name}-${var.environment}-cdn"
+Environment = var.environment
+}
+}
+
+# Output CloudFront URL
+
+output "cloudfront_url" {
+description = "CloudFront distribution URL (HTTPS enabled)"
+value = var.use_cloudfront ? "https://${aws_cloudfront_distribution.main[0].domain_name}" : "Not using CloudFront"
+}
+
+output "cloudfront_domain" {
+description = "CloudFront domain name"
+value = var.use_cloudfront ? aws_cloudfront_distribution.main[0].domain_name : "Not using CloudFront"
+}

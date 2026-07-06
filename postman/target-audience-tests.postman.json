@@ -1,0 +1,945 @@
+{
+  "info": {
+    "_postman_id": "target-audience-collection",
+    "name": "Converge Target Audience Tests",
+    "description": "Comprehensive tests for target audience filtering and industry-specific recommendations with 67 seeded items",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Verify Database Seeding",
+      "item": [
+        {
+          "name": "Verify All 67 Items Seeded",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items?limit=100",
+              "host": ["{{base_url}}"],
+              "path": ["items"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100"
+                }
+              ]
+            },
+            "description": "Verify that all 67 items (7 solutions, 25 categories, 35 products) were seeded correctly"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Total items is 67\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.total).to.eql(67);",
+                  "});",
+                  "",
+                  "pm.test(\"All items are active\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    responseJson.items.forEach(item => {",
+                  "        pm.expect(item.isActive).to.be.true;",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Verify 7 Solutions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items/solutions",
+              "host": ["{{base_url}}"],
+              "path": ["items", "solutions"]
+            },
+            "description": "Verify all 7 top-level solutions were seeded"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Exactly 7 solutions\", function () {",
+                  "    const solutions = pm.response.json();",
+                  "    pm.expect(solutions.length).to.eql(7);",
+                  "});",
+                  "",
+                  "pm.test(\"Solutions include expected items\", function () {",
+                  "    const solutions = pm.response.json();",
+                  "    const names = solutions.map(s => s.name);",
+                  "    pm.expect(names).to.include('Internet');",
+                  "    pm.expect(names).to.include('Transport');",
+                  "    pm.expect(names).to.include('Satellite');",
+                  "    pm.expect(names).to.include('Content');",
+                  "    pm.expect(names).to.include('Security Anti-DDos');",
+                  "});",
+                  "",
+                  "// Store Internet solution ID (ID: 1)",
+                  "const internetSolution = pm.response.json().find(s => s.name === 'Internet');",
+                  "if (internetSolution) {",
+                  "    pm.environment.set('internet_solution_id', internetSolution.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Verify 25 Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items/categories",
+              "host": ["{{base_url}}"],
+              "path": ["items", "categories"]
+            },
+            "description": "Verify all 25 categories were seeded"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Exactly 25 categories\", function () {",
+                  "    const categories = pm.response.json();",
+                  "    pm.expect(categories.length).to.eql(25);",
+                  "});",
+                  "",
+                  "pm.test(\"All categories have parent solutions\", function () {",
+                  "    const categories = pm.response.json();",
+                  "    categories.forEach(cat => {",
+                  "        pm.expect(cat.parentItemId).to.exist;",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Verify 35 Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items/products",
+              "host": ["{{base_url}}"],
+              "path": ["items", "products"]
+            },
+            "description": "Verify all 35 products were seeded"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Exactly 35 products\", function () {",
+                  "    const products = pm.response.json();",
+                  "    pm.expect(products.length).to.eql(35);",
+                  "});",
+                  "",
+                  "pm.test(\"Products have target audiences\", function () {",
+                  "    const products = pm.response.json();",
+                  "    let productsWithAudience = 0;",
+                  "    products.forEach(product => {",
+                  "        if (product.targetAudience) {",
+                  "            productsWithAudience++;",
+                  "        }",
+                  "    });",
+                  "    pm.expect(productsWithAudience).to.be.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Target Audience Tests",
+      "item": [
+        {
+          "name": "Get All Target Audiences",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items/target-audiences",
+              "host": ["{{base_url}}"],
+              "path": ["items", "target-audiences"]
+            },
+            "description": "Get all 10 target audiences"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Exactly 10 target audiences\", function () {",
+                  "    const audiences = pm.response.json();",
+                  "    pm.expect(audiences.length).to.eql(10);",
+                  "});",
+                  "",
+                  "pm.test(\"Audiences include expected types\", function () {",
+                  "    const audiences = pm.response.json();",
+                  "    const names = audiences.map(a => a.name);",
+                  "    pm.expect(names).to.include('Hospitality');",
+                  "    pm.expect(names).to.include('Banking & Financial Services');",
+                  "    pm.expect(names).to.include('Enterprise');",
+                  "    pm.expect(names).to.include('SME');",
+                  "    pm.expect(names).to.include('Construction & Mining');",
+                  "    pm.expect(names).to.include('Digital Innovators');",
+                  "});",
+                  "",
+                  "// Store target audience IDs for filtering tests",
+                  "const hospitality = pm.response.json().find(a => a.name === 'Hospitality');",
+                  "if (hospitality) {",
+                  "    pm.environment.set('hospitality_id', hospitality.id);",
+                  "}",
+                  "",
+                  "const sme = pm.response.json().find(a => a.name === 'SME');",
+                  "if (sme) {",
+                  "    pm.environment.set('sme_id', sme.id);",
+                  "}",
+                  "",
+                  "const banking = pm.response.json().find(a => a.name === 'Banking & Financial Services');",
+                  "if (banking) {",
+                  "    pm.environment.set('banking_id', banking.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filter Items by Hospitality",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items?target_audience_id={{hospitality_id}}&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["items"],
+              "query": [
+                {
+                  "key": "target_audience_id",
+                  "value": "{{hospitality_id}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Filter items for Hospitality industry - should find 21 items (1 solution, 6 categories, 14 products)"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Hospitality has 21 items\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.total).to.eql(21);",
+                  "});",
+                  "",
+                  "pm.test(\"All items are for Hospitality\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    responseJson.items.forEach(item => {",
+                  "        if (item.targetAudience) {",
+                  "            pm.expect(item.targetAudience).to.eql('Hospitality');",
+                  "        }",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"Includes Content solution\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    const solutions = responseJson.items.filter(i => i.itemType === 'solution');",
+                  "    const names = solutions.map(s => s.name);",
+                  "    pm.expect(names).to.include('Content');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filter Items by SME",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items?target_audience_id={{sme_id}}&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["items"],
+              "query": [
+                {
+                  "key": "target_audience_id",
+                  "value": "{{sme_id}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Filter items for SME - should find 17 items (1 category, 16 Fiber Broadband products)"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"SME has 17 items\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.total).to.eql(17);",
+                  "});",
+                  "",
+                  "pm.test(\"Includes 16 products\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    const products = responseJson.items.filter(i => i.itemType === 'product');",
+                  "    pm.expect(products.length).to.eql(16);",
+                  "});",
+                  "",
+                  "pm.test(\"All products are Fiber Broadband\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    const products = responseJson.items.filter(i => i.itemType === 'product');",
+                  "    products.forEach(product => {",
+                  "        pm.expect(product.name).to.include('Fiber Broadband');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filter Items by Banking & Financial",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items?target_audience_id={{banking_id}}&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["items"],
+              "query": [
+                {
+                  "key": "target_audience_id",
+                  "value": "{{banking_id}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Filter items for Banking & Financial Services - should find 5 items (1 solution, 4 security categories)"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Banking has 5 items\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.total).to.eql(5);",
+                  "});",
+                  "",
+                  "pm.test(\"Includes Security Anti-DDoS solution\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    const solutions = responseJson.items.filter(i => i.itemType === 'solution');",
+                  "    const names = solutions.map(s => s.name);",
+                  "    pm.expect(names).to.include('Security Anti-DDos');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Industry-Specific Product Tests",
+      "item": [
+        {
+          "name": "Get Hospitality Products Only",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items?item_type=product&target_audience_id={{hospitality_id}}&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["items"],
+              "query": [
+                {
+                  "key": "item_type",
+                  "value": "product"
+                },
+                {
+                  "key": "target_audience_id",
+                  "value": "{{hospitality_id}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Get only products for Hospitality - should find 14 products (content, managed Wi-Fi)"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Has exactly 14 products\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.total).to.eql(14);",
+                  "});",
+                  "",
+                  "pm.test(\"All are product type\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    responseJson.items.forEach(item => {",
+                  "        pm.expect(item.itemType).to.eql('product');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get SME Fiber Broadband Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items?item_type=product&target_audience_id={{sme_id}}&search=Fiber Broadband&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["items"],
+              "query": [
+                {
+                  "key": "item_type",
+                  "value": "product"
+                },
+                {
+                  "key": "target_audience_id",
+                  "value": "{{sme_id}}"
+                },
+                {
+                  "key": "search",
+                  "value": "Fiber Broadband"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Search for Fiber Broadband products for SME - should find 16 products (PEAK and DAY plans)"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Has 16 Fiber Broadband products\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.total).to.eql(16);",
+                  "});",
+                  "",
+                  "pm.test(\"Includes PEAK plans\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    const peakPlans = responseJson.items.filter(i => i.name.includes('PEAK'));",
+                  "    pm.expect(peakPlans.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Includes DAY plans\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    const dayPlans = responseJson.items.filter(i => i.name.includes('DAY'));",
+                  "    pm.expect(dayPlans.length).to.be.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search Satellite for Remote Industries",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items?search=Starlink&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["items"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "Starlink"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Search for Starlink satellite products - should find Construction & Mining products"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Found Starlink products\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.items.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Products include Starlink in name\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    responseJson.items.forEach(item => {",
+                  "        pm.expect(item.name).to.include('Starlink');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Item Hierarchy Tests",
+      "item": [
+        {
+          "name": "Get Full Hierarchy",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items/hierarchy",
+              "host": ["{{base_url}}"],
+              "path": ["items", "hierarchy"]
+            },
+            "description": "Get complete item hierarchy showing solution → categories → product counts"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Has 7 top-level solutions\", function () {",
+                  "    const hierarchy = pm.response.json();",
+                  "    pm.expect(hierarchy.length).to.eql(7);",
+                  "});",
+                  "",
+                  "pm.test(\"Each solution has categories array\", function () {",
+                  "    const hierarchy = pm.response.json();",
+                  "    hierarchy.forEach(solution => {",
+                  "        pm.expect(solution).to.have.property('categories');",
+                  "        pm.expect(solution.categories).to.be.an('array');",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"Internet solution has Fiber Broadband category\", function () {",
+                  "    const hierarchy = pm.response.json();",
+                  "    const internet = hierarchy.find(s => s.name === 'Internet');",
+                  "    if (internet) {",
+                  "        const categories = internet.categories.map(c => c.name);",
+                  "        pm.expect(categories).to.include('Fiber Broadband');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Internet Solution Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items/categories?solution_id={{internet_solution_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["items", "categories"],
+              "query": [
+                {
+                  "key": "solution_id",
+                  "value": "{{internet_solution_id}}"
+                }
+              ]
+            },
+            "description": "Get categories under Internet solution - should include Fiber Broadband, IX Express, etc."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Has Internet categories\", function () {",
+                  "    const categories = pm.response.json();",
+                  "    pm.expect(categories.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"All categories belong to Internet solution\", function () {",
+                  "    const categories = pm.response.json();",
+                  "    const solutionId = parseInt(pm.environment.get('internet_solution_id'));",
+                  "    categories.forEach(cat => {",
+                  "        pm.expect(cat.parentItemId).to.eql(solutionId);",
+                  "    });",
+                  "});",
+                  "",
+                  "// Store Fiber Broadband category ID for next test",
+                  "const fiberBroadband = pm.response.json().find(c => c.name === 'Fiber Broadband');",
+                  "if (fiberBroadband) {",
+                  "    pm.environment.set('fiber_broadband_id', fiberBroadband.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Fiber Broadband Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items/products?category_id={{fiber_broadband_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["items", "products"],
+              "query": [
+                {
+                  "key": "category_id",
+                  "value": "{{fiber_broadband_id}}"
+                }
+              ]
+            },
+            "description": "Get all products under Fiber Broadband category - should find 16 products"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Has 16 Fiber Broadband products\", function () {",
+                  "    const products = pm.response.json();",
+                  "    pm.expect(products.length).to.eql(16);",
+                  "});",
+                  "",
+                  "pm.test(\"All products are for SME\", function () {",
+                  "    const products = pm.response.json();",
+                  "    products.forEach(product => {",
+                  "        if (product.targetAudience) {",
+                  "            pm.expect(product.targetAudience).to.eql('SME');",
+                  "        }",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Cross-Industry Search Tests",
+      "item": [
+        {
+          "name": "Search Managed Services",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items?search=managed&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["items"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "managed"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Search for managed services across all industries"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Found managed services items\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.items.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Results include different target audiences\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    const audiences = new Set(responseJson.items.map(i => i.targetAudience).filter(Boolean));",
+                  "    pm.expect(audiences.size).to.be.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search Security Solutions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items?search=security&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["items"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "security"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Search for security-related items"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Found security items\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.items.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Includes Security Anti-DDoS\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    const names = responseJson.items.map(i => i.name);",
+                  "    const hasSecurity = names.some(name => name.includes('Security') || name.includes('Defense'));",
+                  "    pm.expect(hasSecurity).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "6. Pagination Tests",
+      "item": [
+        {
+          "name": "Get First Page of Items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items?limit=10&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["items"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            },
+            "description": "Test pagination - first page"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Returns exactly 10 items\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.items.length).to.eql(10);",
+                  "});",
+                  "",
+                  "pm.test(\"Total is 67\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.total).to.eql(67);",
+                  "});",
+                  "",
+                  "pm.test(\"Offset is 0\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.offset).to.eql(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Second Page of Items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/items?limit=10&offset=10",
+              "host": ["{{base_url}}"],
+              "path": ["items"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "offset",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Test pagination - second page"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Returns items for second page\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.items.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Offset is 10\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.offset).to.eql(10);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

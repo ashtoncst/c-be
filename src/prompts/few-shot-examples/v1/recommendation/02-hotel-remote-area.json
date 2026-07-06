@@ -1,0 +1,39 @@
+{
+  "id": "example-02",
+  "name": "Hotel in Remote Area",
+  "version": "1.0",
+  "conversationStage": "recommendation",
+  "userQuery": "we're a hotel in a remote area",
+  "reasoning": [
+    "Context: Hospitality industry + 'remote area' → likely no fiber available",
+    "Solution: 'Satellite' (only option for remote locations) → Starlink products",
+    "Additional need: Hotels need guest Wi-Fi → 'Managed Services' → Managed Wi-Fi",
+    "Why: Starlink Enterprise Kit works in remote areas, pairs with Managed Wi-Fi for guest experience"
+  ],
+  "output": {
+    "solution": "Satellite",
+    "category": null,
+    "recommendedItems": [
+      {
+        "id": 49,
+        "name": "Starlink Enterprise Kit",
+        "reason": "Best solution for remote hotels - provides reliable high-speed internet where traditional fiber isn't available. Works for guest Wi-Fi, booking systems, and POS."
+      },
+      {
+        "id": 67,
+        "name": "Managed Wi-Fi: Premium Package",
+        "reason": "Pairs perfectly with Starlink to provide seamless guest connectivity across your property. Premium package suits hospitality standards."
+      }
+    ],
+    "reply": "For a remote hotel location, I recommend **Starlink Enterprise Kit** for reliable internet where traditional fiber isn't available. Pair it with our **Managed Wi-Fi Premium Package** to provide seamless guest connectivity. What's your hotel size (number of rooms) so I can refine the recommendation?",
+    "confidence": 0.92
+  },
+  "metadata": {
+    "tags": ["hospitality", "remote", "satellite", "starlink", "managed-wifi"],
+    "effectivenessScore": 0.93,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Classic remote location example with satellite solution"
+  }
+}
+

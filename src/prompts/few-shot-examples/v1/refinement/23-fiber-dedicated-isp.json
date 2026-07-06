@@ -1,0 +1,32 @@
+{
+  "id": "example-23",
+  "name": "Refinement - Fiber Dedicated for ISP/Tech Company",
+  "version": "1.0",
+  "conversationStage": "refinement",
+  "userQuery": "yes we have our own AS number and IP prefixes",
+  "contextNote": "Previous turn: Bot asked 'Do you have your own Autonomous System (AS) number and IP prefixes, or do you need standard internet connectivity?'. User confirms they have their own AS/IPs, indicating they need Fiber Dedicated, not Fiber Broadband.",
+  "reasoning": [
+    "Context: Refinement stage - user is clarifying technical requirements",
+    "Previous query was likely: 'we need fiber internet' or 'we need high-speed connectivity' (vague)",
+    "User signal: 'own AS number and IP prefixes' → technical sophistication, likely ISP or large tech company",
+    "Key insight: This means they need Fiber Dedicated (IX Express or IPT Express), NOT Fiber Broadband",
+    "Solution mapping: Internet → Fiber Dedicated category (IX Express, IPT Express)",
+    "Target audience: ISPs, large tech companies, data centers, network operators",
+    "Refinement needed: Capacity needs, peering requirements, international connectivity"
+  ],
+  "output": {
+    "solution": "Internet",
+    "category": "Fiber Dedicated",
+    "recommendedItems": [],
+    "reply": "Perfect! Since you have your own AS and IP prefixes, you need our **Fiber Dedicated services** designed for ISPs and enterprises with their own network infrastructure:\n\n**IX Express**: Provides connectivity benefits of an ISP with international presence and capacity. Direct peering with major networks and internet exchanges.\n\n**IPT Express**: Designed for ISPs and businesses with their own AS and IP prefixes, offering high-capacity dedicated connectivity.\n\nThese are different from standard Fiber Broadband - they're built for network operators who manage their own routing and IP space.\n\nTo recommend the right solution:\n\n**Technical Requirements**:\n1. **Capacity**: What bandwidth do you need? (1 Gbps, 10 Gbps, 100 Gbps?)\n2. **Peering**: Do you need direct peering with specific networks or internet exchanges?\n3. **International Connectivity**: Do you need international upstream connectivity, or primarily domestic?\n4. **Redundancy**: Do you need multiple diverse paths for network resilience?\n5. **Use Case**: Are you an ISP serving customers, running a data center, or a large enterprise?\n\n**BGP & Routing**: We support full BGP peering, allowing you complete control over your routing policies and traffic engineering.\n\nWhat's your primary use case and required capacity?",
+    "confidence": 0.86
+  },
+  "metadata": {
+    "tags": ["refinement", "fiber-dedicated", "ix-express", "ipt-express", "isp", "as-number", "bgp", "peering"],
+    "effectivenessScore": 0.90,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Demonstrates refinement for highly technical users with own AS/IPs. Differentiates Fiber Dedicated from Fiber Broadband. Covers under-represented IX Express and IPT Express products."
+  }
+}
+

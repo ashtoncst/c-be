@@ -1,0 +1,41 @@
+{
+  "id": "example-05",
+  "name": "Feedback - Budget-Conscious Alternatives",
+  "version": "1.0",
+  "conversationStage": "feedback",
+  "userQuery": "what about more affordable options or alternatives?",
+  "contextNote": "User saw security recommendations (IDs: 54, 55, 56), now seeking cost-effective alternatives",
+  "reasoning": [
+    "Context: Feedback stage - user reviewed recommendations but seeking cost-effective alternatives",
+    "Previous solution: 'Security Anti-DDoS' - user confirmed interest in security",
+    "User signal: 'affordable' → budget-conscious, likely SME segment",
+    "Alternative strategy: Suggest entry-level security + bundle with internet for cost savings",
+    "CRITICAL: Do NOT repeat previous recommendations (54, 55, 56)"
+  ],
+  "output": {
+    "solution": "Security Anti-DDos",
+    "category": "On-Premise Defense",
+    "recommendedItems": [
+      {
+        "id": 54,
+        "name": "On-Premise Defense",
+        "reason": "Most cost-effective DDoS protection. Fast local mitigation within Converge network. Great entry-level security for SMEs watching budget while still getting reliable protection."
+      },
+      {
+        "id": 35,
+        "name": "Fiber Broadband PEAK 200-400 mbps",
+        "reason": "Bundle with secure internet connectivity. Converge fiber includes basic DDoS protection at network level, adding an extra layer of security without additional cost."
+      }
+    ],
+    "reply": "For more affordable security, I recommend starting with:\n\n**On-Premise Defense**: Entry-level DDoS protection with fast local mitigation - most cost-effective option\n**Fiber Broadband PEAK 200-400 mbps**: Bundle your internet with built-in network-level protection for added value\n\nThis combination provides solid security coverage while managing costs. Does that answer your question?",
+    "confidence": 0.90
+  },
+  "metadata": {
+    "tags": ["feedback", "alternatives", "budget", "cost-effective", "bundle"],
+    "effectivenessScore": 0.88,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Demonstrates handling budget concerns without repeating previous recommendations"
+  }
+}
+

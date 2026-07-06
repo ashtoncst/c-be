@@ -1,0 +1,46 @@
+# AWS Configuration
+aws_region   = "ap-southeast-1"  # Your work profile region (or change to us-east-1)
+aws_profile  = "work"             # Use your work AWS profile
+environment  = "staging"
+project_name = "converge-backend"
+
+# Container Configuration
+container_port   = 3000
+container_cpu    = 256  # 0.25 vCPU
+container_memory = 512  # 512 MB
+
+# Database Configuration
+db_instance_class = "db.t4g.micro"
+db_name           = "converge_staging_db"
+db_username       = "postgres"
+db_password       = "CHANGE_ME_STRONG_PASSWORD"
+
+# Google Cloud Configuration (for AI services)
+gcp_project_id     = "your-gcp-project-id"
+vertex_ai_location = "us-central1"
+gemini_api_key     = "your-gemini-api-key"
+
+# Resend Email Configuration (for sales lead notifications)
+resend_api_key             = "re_xxxxxxxxxxxxxxxxxxxx"
+sales_lead_recipient_email = "sales@yourcompany.com"
+sales_lead_from_email      = "onboarding@resend.dev"  # Use verified domain in production
+sales_lead_from_name       = "GBG Portal"
+
+# SSL/TLS Configuration (Optional - for HTTPS/WSS support)
+# Choose ONE of the following options:
+
+# Option 1: CloudFront (FREE HTTPS, no domain needed - recommended for quick setup)
+# use_cloudfront = true
+
+# Option 2: Use a custom domain with ACM (professional, ~$1-10/year)
+# domain_name                = "api.yourdomain.com"
+# subject_alternative_names  = ["www.api.yourdomain.com"]
+# use_route53                = true
+# route53_zone_id            = "Z1234567890ABC"
+# enable_https               = true
+# force_https_redirect       = true
+
+# Option 3: Use an existing certificate
+# certificate_arn          = "arn:aws:acm:region:account:certificate/certificate-id"
+# enable_https             = true
+# force_https_redirect     = true

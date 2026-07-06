@@ -1,0 +1,61 @@
+{
+  "id": "example-27",
+  "name": "Feedback - No (Wrong Speed/Tier)",
+  "version": "1.0",
+  "conversationStage": "feedback",
+  "userQuery": "no",
+  "contextNote": "Bot showed high-tier internet recommendations (SUMMIT 500, SUMMIT 1000, Fiber Dedicated 200) for a user who mentioned 'small office'. User says 'no' - likely because recommendations are too expensive/fast for their needs.",
+  "previousRecommendations": [
+    {"id": 37, "name": "Fiber Broadband SUMMIT 500-1000 mbps"},
+    {"id": 38, "name": "Fiber Broadband SUMMIT 1000-2000 mbps"},
+    {"id": 43, "name": "Fiber Dedicated Internet 200 mbps"}
+  ],
+  "contextFromPreviousTurn": {
+    "userMentioned": "small office",
+    "previousSolution": "Internet",
+    "previousCategory": "Fiber Broadband"
+  },
+  "reasoning": [
+    "Context: User said 'no' to high-tier recommendations for a small office",
+    "Likely issue: Recommendations are too expensive or over-provisioned for their needs",
+    "User context: 'small office' suggests 5-20 employees, cost-conscious, need basic connectivity",
+    "Solution: Show LOWER-tier alternatives in SAME category (Internet/Fiber)",
+    "Strategy: Recommend PEAK tier (more economical) instead of SUMMIT tier",
+    "CRITICAL: Do NOT ask for industry/size/use case - we already know it's a small office",
+    "CRITICAL: Do NOT restart discovery - stay in same solution area",
+    "CRITICAL: Show 3-5 DIFFERENT products (lower tiers, more economical options)",
+    "Ask: ONE clarifying question about what matters most (speed vs cost, reliability needs)",
+    "Acknowledge: 'not the perfect fit' to show empathy"
+  ],
+  "output": {
+    "solution": "Internet",
+    "category": "Fiber Broadband",
+    "recommendedItems": [
+      {
+        "id": 34,
+        "name": "Fiber Broadband PEAK 50-100 mbps",
+        "reason": "Most economical option for small offices (5-15 users). Reliable fiber connectivity for email, browsing, and cloud apps without premium pricing."
+      },
+      {
+        "id": 35,
+        "name": "Fiber Broadband PEAK 200-400 mbps",
+        "reason": "Step up for small offices with heavier usage (video calls, file sharing). Great balance between performance and cost."
+      },
+      {
+        "id": 36,
+        "name": "Fiber Broadband PEAK 100 mbps",
+        "reason": "Perfect middle ground for growing small offices. Handles daily operations smoothly without breaking the budget."
+      }
+    ],
+    "reply": "I understand those options might not be the perfect fit for a small office. Here are more economical alternatives:\n\n**Fiber Broadband PEAK 50-100 mbps**: Most cost-effective for small teams (5-15 users) - handles email, browsing, and cloud apps\n**Fiber Broadband PEAK 200-400 mbps**: Best balance of performance and price for offices with video calls and file sharing\n**Fiber Broadband PEAK 100 mbps**: Solid middle ground for growing small offices\n\nAre you looking for the most economical option, or do you need more speed for video conferencing and cloud applications?",
+    "confidence": 0.88
+  },
+  "metadata": {
+    "tags": ["feedback", "no", "rejection", "wrong-tier", "downgrade", "budget", "small-office", "alternatives"],
+    "effectivenessScore": 0.92,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-17",
+    "notes": "Critical example: Shows how to handle 'no' by inferring the issue (over-provisioned) and showing appropriate alternatives without restarting discovery. Uses context from previous turn."
+  }
+}
+

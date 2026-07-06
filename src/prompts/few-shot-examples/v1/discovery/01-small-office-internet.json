@@ -1,0 +1,34 @@
+{
+  "id": "example-01",
+  "name": "Small Office Internet",
+  "version": "1.0",
+  "conversationStage": "discovery",
+  "userQuery": "I need internet for a 3-room office with 10 employees",
+  "reasoning": [
+    "Context: Small office (SME segment), 10 employees → moderate bandwidth needs",
+    "Use cases: Video calls, cloud apps, general browsing → ~100-200 Mbps sufficient",
+    "Solution: \"Internet\" → Category: \"Fiber Broadband\" → PEAK tier (best value for SME)",
+    "Why: Fiber Broadband PEAK 200-400 mbps handles 10 users comfortably"
+  ],
+  "output": {
+    "solution": "Internet",
+    "category": "Fiber Broadband",
+    "recommendedItems": [
+      {
+        "id": 35,
+        "name": "Fiber Broadband PEAK 200-400 mbps",
+        "reason": "Perfect for 10-person team with video calls and cloud apps. Reliable fiber with speeds for all business needs."
+      }
+    ],
+    "reply": "For your 10-person office across 3 rooms, I recommend **Fiber Broadband PEAK 200-400 mbps**. This provides reliable speeds for video calls, cloud applications, and general browsing for your entire team. Would you like to know about pricing or add managed Wi-Fi for better coverage?",
+    "confidence": 0.95
+  },
+  "metadata": {
+    "tags": ["sme", "internet", "fiber", "office", "initial-query"],
+    "effectivenessScore": 0.95,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Classic initial query example with clear requirements"
+  }
+}
+

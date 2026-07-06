@@ -1,0 +1,44 @@
+{
+  "id": "example-12",
+  "name": "Feedback - Objection or Concern",
+  "version": "1.0",
+  "conversationStage": "feedback",
+  "userQuery": "that seems too expensive for our budget",
+  "contextNote": "Bot just showed premium internet solutions (Fiber Broadband PEAK 300-600 mbps, 400-800 mbps) and asked 'Does that answer your question?'. User expresses price concern.",
+  "reasoning": [
+    "Context: Feedback stage - user has a concern/objection about the recommendations",
+    "User signal: 'too expensive' = price objection, but still interested in the solution",
+    "Important: This is NOT a request for alternatives in different category - user wants SAME solution at lower price",
+    "Action: Address objection by showing more economical options within the SAME category",
+    "Strategy: Acknowledge concern + Show lower-tier alternatives + Explain trade-offs",
+    "CRITICAL: Show DIFFERENT products (lower price points) to address budget constraint",
+    "CRITICAL: Explain what they gain/lose with each tier so they can make informed decision",
+    "Response structure: [Acknowledge] + [Budget-Friendly Alternatives] + [Trade-off Explanation] + [Does that answer your question?]"
+  ],
+  "output": {
+    "solution": "Internet",
+    "category": "Fiber Broadband",
+    "recommendedItems": [
+      {
+        "id": 35,
+        "name": "Fiber Broadband PEAK 200-400 mbps",
+        "reason": "More budget-friendly option while still providing reliable fiber connectivity. Perfect for small-medium businesses. Handles daily operations, video calls, and cloud applications without breaking the bank."
+      },
+      {
+        "id": 34,
+        "name": "Fiber Broadband PEAK 100 mbps",
+        "reason": "Most economical fiber option. Great starting point for smaller offices or businesses with basic connectivity needs. You can always upgrade as you grow."
+      }
+    ],
+    "reply": "I completely understand budget concerns! Let me show you more economical options:\n\n**Fiber Broadband PEAK 200-400 mbps**: More affordable while still delivering excellent performance for most business needs. Handles video calls, cloud apps, and daily operations smoothly.\n\n**Fiber Broadband PEAK 100 mbps**: Our most economical fiber option. Perfect for smaller offices with basic connectivity needs, and you can always upgrade as your business grows.\n\n**The Trade-Off**: These plans have lower speeds than the premium options I showed earlier, but they're still fiber connections with high reliability. The question is: what's your typical internet usage? (number of users, video conferencing frequency, cloud applications, etc.) This helps me ensure the speed is right for you.\n\nDoes that answer your question?",
+    "confidence": 0.92
+  },
+  "metadata": {
+    "tags": ["feedback", "objection", "price-concern", "budget", "downgrade", "alternative-tier"],
+    "effectivenessScore": 0.93,
+    "usageCount": 0,
+    "lastUpdated": "2025-11-13",
+    "notes": "Teaches AI to handle objections by offering lower-tier alternatives in same category. Shows empathy and explains trade-offs. Stays in feedback loop to ensure user satisfaction."
+  }
+}
+
